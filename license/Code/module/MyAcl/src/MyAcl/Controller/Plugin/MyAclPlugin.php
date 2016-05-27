@@ -27,81 +27,85 @@ class MyAclPlugin extends AbstractPlugin
 
     public function doAuthorization($e,$sm,$url)
     {
+    	
     	$route = array_filter(explode('/',trim($url,'/')));
+    	if(empty($route)){
+    		$route = array('application','login','index');
+    	}
     	$sess = $this->getSessContainer();
-    	if($sess->offsetExists('_adminRoleId')){
+    	
     		
-	    	$adapter = $sm->get('Zend\Db\Adapter\Adapter');
-	    	$roleId = (int) $sess->offsetGet('_adminRoleId');
-	    	if($roleId == 1)
-	    		$role = 'admin';
-	    	else if($roleId == 2)
-	    		$role = 'general';
-	    	else if($roleId == 3)
-	    		$rolw = 'auditor';
-	 		
-	    	// 设置 ACL
-	    	$acl = new Acl();
-	    	$acl->deny(); // 设置默认状态为禁止访问
-	    	//$acl->allow(); // 或者设置默认为访问状态
+    	$adapter = $sm->get('Zend\Db\Adapter\Adapter');
+    	
+    	$roleId = (int) $sess->offsetGet('_adminRoleId');
+    	if($roleId == 1)
+    		$role = 'admin';
+    	else if($roleId == 2)
+    		$role = 'general';
+    	else if($roleId == 3)
+    		$role = 'auditor';
+    	else 
+    		$role = 'anonymous';
 	    	
-	    	# 添加角色，角色之间可以继承，例如“user”拥有“anonymous”的所有权限。
-	    	$acl->addRole(new Role('general'));
-	    	$acl->addRole(new Role('auditor'),  'general');
-	    	$acl->addRole(new Role('admin'), 'auditor');
-	    	
-	    	
-	
-	        # 添加资源
-	        $acl->addResource('application'); // Application 模块
-	        $acl->addResource('system'); // Album 模块
-	        $acl->addResource('ca');
-	
-	        ################ 设置权限 #######################
-	        // $acl->allow('角色', '资源', '控制器:方法');
-			
-	        $rs = $this->select($adapter, 'lic_user_role', array('id'=>(int)$roleId));
-	
-	        //$acl->allow('anonymous', 'application', 'login:index');
-	        
-	        $aclString = (isset($rs) && !empty($rs))?$rs['acl']:"";
-	        
-	        $aclArray = array_filter(explode(',',$aclString));
-	        
-	        foreach($aclArray as $a){
-	        	
-	        	$permi = $this->select($adapter, 'lic_user_menu',
-	        			array(
-	        				'acl'=>$a,
-	        				'operation'=>$a,		
-	        			),
-	        			array(
-	        				'name'=>array('p'=>'lic_user_permi'),
-	        				'on'=>'t.id=p.menu_id',
-	        				'columns'=>array('operation'=>'operation'),
-	        			),'OR');
-	        	
-	        	if($a == $permi['operation'] || $a == $permi['acl']){
-	        		$filter = new DashToSeparator(':');
-	        		$url = $filter->filter($permi['url']);
-	        		$acl->allow($role, $permi['module'], $url); 
-	        	}
-	        }
-				
-	        if (!$acl->isAllowed($role, $route[0],$route[1].':'.'index')){
-	        	echo "222";
-	        }else{
-	        	echo '44';
-	        }
+    	// 设置 ACL
+    	$acl = new Acl();
+    	$acl->deny(); // 设置默认状态为禁止访问
+    	//$acl->allow(); // 或者设置默认为访问状态
+
+    	# 添加角色，角色之间可以继承，例如“user”拥有“anonymous”的所有权限。
+    	$acl->addRole(new Role('anonymous'));
+    	$acl->addRole(new Role('general'),'anonymous');
+    	$acl->addRole(new Role('auditor'),'anonymous');
+    	$acl->addRole(new Role('admin'),'anonymous');
+    	
+    	$acl->allow('anonymous','application','login:index');
+    	
+        # 添加资源
+        $acl->addResource('application'); // Application 模块
+        $acl->addResource('system'); // System 模块
+        $acl->addResource('ca');
+
+        ################ 设置权限 #######################
+        // $acl->allow('角色', '资源', '控制器:方法');
+        
+        $rs = $this->select($adapter, 'lic_user_role', array('id'=>(int)$roleId));
+
+        $aclString = (isset($rs) && !empty($rs))?$rs['acl']:"";
+        
+        $aclArray = array_filter(explode(',',$aclString));
+        
+       	//$acl->allow($role, 'application', 'index:index');
+        
+        foreach($aclArray as $a){
+        	$permi = $this->select($adapter, 'lic_user_menu',
+        			array(
+        				'acl'=>$a,
+        				'operation'=>$a,		
+        			),
+        			array(
+        				'name'=>array('p'=>'lic_user_permi'),
+        				'on'=>'t.id=p.menu_id',
+        				'columns'=>array('operation'=>'operation'),
+        			),'OR');
+        	
+        	if($a == $permi['operation'] || $a == $permi['acl']){
+        		$filter = new DashToSeparator(':');
+        		$url = $filter->filter($permi['url']);
+        		$acl->allow($role, $permi['module'], $url); 
+        	}
+        }
+       exit;
+			//echo $route[0].$route[1];
+        if (!$acl->isAllowed($role, $route[0],$route[1].':'.'index')){
+        	echo "222";
+        }else{
+        	echo '44';
+        }
 	        
 	        //$route  = $e->getMatchedRouteName();
 	        //print_r($route->params);
 	        exit;
 	        // Album -------------------------------->
-	        $acl->allow('anonymous', 'album', 'album:index');
-	        $acl->allow('anonymous', 'album', 'album:add');
-	        $acl->deny('anonymous', 'album', 'album:hello');
-	        $acl->allow('anonymous', 'album', 'album:view');
 	        $acl->allow('anonymous', 'album', 'album:edit'); // 同样允许路由为 “zf2-tutorial.com/album/edit/1” 的访问
 	        //$acl->deny('anonymous', 'Album', 'Album:song');
 	
@@ -133,7 +137,7 @@ class MyAclPlugin extends AbstractPlugin
 	            $response->getHeaders()->addHeaderLine('Location', $url);
 	            $e->stopPropagation();
 	        }
-    	}
+    	
     }
     
     public function select($adapter,$table,$where=null,$join=null,$combination = 'or')
