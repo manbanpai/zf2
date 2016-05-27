@@ -1,0 +1,75 @@
+<?php
+namespace System\Model;
+
+use Zend\InputFilter\InputFilter;
+
+use Zend\InputFilter\InputFilterInterface;
+
+use Zend\InputFilter\InputFilterAwareInterface;
+
+class Menu implements InputFilterAwareInterface
+{
+	public $id;
+	public $pid;
+	public $name;
+	public $module;
+	public $controller;
+	public $url;
+	public $acl;
+	public $sorting;
+	public $display;
+	
+	public $inputFilter;
+	
+	public function exchangeArray($data)
+	{
+		$this->id = isset($data['id'])?$data['id']:null;
+		$this->pid = isset($data['pid'])?$data['pid']:null;
+		$this->name = isset($data['name'])?$data['name']:null;
+		$this->module = isset($data['module'])?$data['module']:null;
+		$this->controller = isset($data['controller'])?$data['controller']:null;
+		$this->url = isset($data['url'])?$data['url']:null;
+		$this->acl = isset($data['acl'])?$data['acl']:null;
+		$this->sorting = isset($data['sorting'])?$data['sorting']:null;
+		$this->display = isset($data['display'])?$data['display']:null;
+	}
+	
+	public function getArrayCopy(){
+		return get_object_vars($this);
+	}
+	
+	public function setInputFilter(InputFilterInterface $inputFilter)
+	{
+		throw new \Exception('不使用');
+	}
+	
+	// 获取收入类型过滤器，对指定的表单元素进行过滤
+	public function getInputFilter()
+	{
+		if(!$this->inputFilter){
+			//实例化一个InputFilter过滤器
+			$inputFilter = new InputFilter();
+	
+			$inputFilter->add(array(
+					'name'=>'name',
+					'required'=>true,
+					'filters'=>array(
+							array('name'=>'StripTags'),
+							array('name'=>'StringTrim'),
+					),
+			));
+	
+			$inputFilter->add(array(
+					'name'=>'id',
+					'required'=>true,
+					'filters'=>array(
+							array('name'=>'Int'),
+					)
+			));
+	
+			$this->inputFilter = $inputFilter;
+		}
+	
+		return $this->inputFilter;
+	}
+}

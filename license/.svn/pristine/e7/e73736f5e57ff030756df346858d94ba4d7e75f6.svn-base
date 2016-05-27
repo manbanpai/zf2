@@ -1,0 +1,34 @@
+<div class="btn-group" role="group" aria-label="...">
+<?php if ($this->count<=0){?>
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('ca', array('controller'=>'company','action'=>'add'));?>">增加</a>
+<?php }?>
+</div>
+<br><br>
+<table class="table">
+    <tr>
+        <td><b>公司名称</b></td>
+        <td><b>联系人</b></td>
+        <td><b>电话</b></td>
+        <td><b>Email</b></td>
+        <td><b>操作</b></td>
+    </tr>
+    <?php if ($this->count>0){?>
+    <tr>
+        <td><?php echo $this->data['company_name'];?></td>
+        <td><?php echo $this->data['contacts'];?></td>
+        <td><?php echo $this->data['tel'];?></td>
+        <td><?php echo $this->data['email'];?></td>
+        <td>
+            <a href="<?php echo $this->url('ca', array('controller'=>'company','action'=>'edit','id'=>$this->data['id']));?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></a> 
+            <a href="javascript:void(0);" onClick="del('<?php echo $this->data['id']?>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></a>
+        </td>
+    </tr>
+    <?php }?>
+</table>
+<script type="text/javascript">
+	function del(id){
+		if(confirm('确定要删除吗？将不可恢复！')){
+			window.location.href='<?php echo $this->url('ca', array('controller'=>'company','action'=>'delete'));?>/'+id;
+		}	
+	}
+</script>

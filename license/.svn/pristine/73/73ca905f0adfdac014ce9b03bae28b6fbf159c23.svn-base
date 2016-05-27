@@ -1,0 +1,78 @@
+<?php
+namespace Application\Model;
+
+use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Select;
+
+class LoginRecordTable
+{
+	protected $tableGateway;
+	
+	public function __construct(TableGateway $tg)
+	{
+		$this->tableGateway = $tg;
+	}
+	
+	public function deleteLoginRecord($id)
+	{
+		$this->tableGateway->delete(array('id'=>(int)$id));
+	}
+	
+	public function saveLoginRecord(LoginRecord $loginRecord)
+	{
+		$data = array(
+				'id'=>$loginRecord->id,
+				'user_id'=>$loginRecord->user_id,
+				'ip'=>$loginRecord->ip,
+				'place'=>$loginRecord->place,
+				'create_time'=>$loginRecord->create_time,
+				'lock_time'=>$loginRecord->lock_time,
+				'login_error_number'=>$loginRecord->login_error_number,
+			);
+		
+		$id = (int) $loginRecord->id;
+		
+		if($id == 0){
+			$this->tableGateway->insert($data);
+		}else{
+			if($this->getLoginRecord($id)){
+				$this->tableGateway->update($data,array('id'=>$id));
+			}else{
+				return false;
+			}
+		}
+	}
+	
+	public function getLoginRecordByArray(array $arr)
+	{
+		if(!empty($arr)){
+			$rowset = $this->tableGateway->select($arr);
+			$row = $rowset->current();
+			if(!$row){
+				return false;
+			}
+			return $row;
+		}
+	}
+	
+	public function getLoginRecord($id)
+	{
+		$id = (int) $id;
+		$rowset = $this->tableGateway->select(array('id'=>$id));
+		$row = $rowset->current();
+		if(!$row){
+			return false;
+		}
+		return $row;
+	}
+	
+	public function fetchAll($where=null,$order=null,$limit=null)
+	{
+		$resultSet = $this->tableGateway->select(function(Select $select) use ($where,$order,$limit){
+			$select->where($where);
+			$select->order($order)->limit($limit);
+		});
+		return $resultSet;
+	}
+}

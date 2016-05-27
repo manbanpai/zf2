@@ -1,0 +1,57 @@
+<?php
+namespace Application\Model;
+
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterInterface;
+use Zend\InputFilter\InputFilter;
+
+class LoginRecord implements InputFilterAwareInterface
+{
+	public $id;
+	public $user_id;
+	public $ip;
+	public $place;
+	public $create_time;
+	public $lock_time;
+	public $login_error_number;
+	
+	protected $inputFilter;
+	
+	public function exchangeArray($data)
+	{
+		$this->id = isset($data['id'])?$data['id']:null;
+		$this->user_id = isset($data['user_id'])?$data['user_id']:null;
+		$this->ip = isset($data['ip'])?$data['ip']:null;
+		$this->place = isset($data['place'])?$data['place']:null;
+		$this->create_time = isset($data['create_time'])?$data['create_time']:null;
+		$this->lock_time = isset($data['lock_time'])?$data['lock_time']:null;
+		$this->login_error_number = isset($data['login_error_number'])?$data['login_error_number']:null;
+	}
+	
+	public function getArrayCopy()
+	{
+		return get_object_vars($this);
+	}
+	
+	public function setInputFilter(InputFilterInterface $inputFilter)
+	{
+		throw new \Exception('不使用');
+	}
+	
+	public function getInputFilter()
+	{
+		if(!$this->inputFilter){
+			$inputFilter = new InputFilter();
+			
+			$inputFilter->add(array(
+				'name'=>'id',
+				'required'=>true,
+				'filters'=>array(
+					array('name'=>'Int'),
+				),
+			));
+			$this->inputFilter = $inputFilter;
+		}
+		return $this->inputFilter;
+	}
+}
