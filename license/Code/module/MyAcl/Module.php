@@ -33,12 +33,12 @@ class Module
         $request = $sm->get('request');
 		
         $matchedRoute = $router->match($request);
-       	$url = $request->getUri()->getPath();
+
         if (null !== $matchedRoute) {
             $sharedManager->attach('Zend\Mvc\Controller\AbstractActionController','dispatch',
-                function($e) use ($sm,$url) {
+                function($e) use ($sm) {
                     $sm->get('ControllerPluginManager')->get('MyAclPlugin')
-                       ->doAuthorization($e,$sm,$url); //pass to the plugin...
+                       ->doAuthorization($e,$sm); //pass to the plugin...
                 },2
             );
         }

@@ -15,7 +15,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 
 use System\Model\UserTable;
 
-class UserController extends Controller
+class UserController extends AbstractActionController
 {
 	protected $userTable;
 	protected $userRoleTable;

@@ -11,12 +11,12 @@ use Zend\View\Model\ViewModel;
 
 use Zend\Mvc\Controller\AbstractActionController;
 
-class MenuController extends Controller
+class MenuController extends AbstractActionController
 {
 	protected $menuTable;
 	protected $menuPermiTable;
 	
-	public function permiAction()
+	public function setAction()
 	{
 		$request = $this->getRequest();
 		if($request->isPost()){
@@ -36,16 +36,17 @@ class MenuController extends Controller
 					}
 					$operation = array_diff($operation,$tmp);
 				}
-				//print_r($operation);exit;
+
 				if(!empty($operation)){
 					$des = array(
 							'add'=>'添加',
-							'update'=>'修改',
+							'edit'=>'修改',
 							'delete'=>'删除',
 							'export'=>'导出',
 							'import'=>'导入',
 							'statistics'=>'统计',
-							'backup'=>'备份'
+							'backup'=>'备份',
+							'set'=>'设置'
 					);
 					foreach($operation as $o){
 						$s = explode('_', $o);
@@ -183,6 +184,7 @@ class MenuController extends Controller
 		$data = $this->getMenuTable()->fetchAll();
 		$arr = array();
 		foreach($data as $d){
+			$arr[] = '请选择';
 			$arr[$d->id] = $d->name;
 		}
 	

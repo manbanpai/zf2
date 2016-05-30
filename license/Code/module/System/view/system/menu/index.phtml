@@ -64,7 +64,7 @@
 								  <input type="checkbox" name="operation[]" <?php if(in_array($acl[0].'_add',$permi)){echo 'checked';}?> value="<?php echo $acl[0];?>_add"> 添加
 								</label>
 								<label class="checkbox-inline">
-								  <input type="checkbox" name="operation[]" <?php if(in_array($acl[0].'_update',$permi)){echo 'checked';}?> value="<?php echo $acl[0];?>_update"> 修改
+								  <input type="checkbox" name="operation[]" <?php if(in_array($acl[0].'_edit',$permi)){echo 'checked';}?> value="<?php echo $acl[0];?>_edit"> 修改
 								</label>
 								<label class="checkbox-inline">
 								  <input type="checkbox" name="operation[]" <?php if(in_array($acl[0].'_delete',$permi)){echo 'checked';}?> value="<?php echo $acl[0];?>_delete"> 删除
@@ -80,6 +80,9 @@
 								</label>
 								<label class="checkbox-inline">
 								  <input type="checkbox" name="operation[]" <?php if(in_array($acl[0].'_backup',$permi)){echo 'checked';}?> value="<?php echo $acl[0];?>_backup"> 备份
+								</label>
+								<label class="checkbox-inline">
+								  <input type="checkbox" name="operation[]" <?php if(in_array($acl[0].'_set',$permi)){echo 'checked';}?> value="<?php echo $acl[0];?>_set"> 设置
 								</label>
 							</div>
 						</div>
@@ -116,7 +119,7 @@
 
 		    htmlobj=$.ajax({
 			    type:'POST',
-			    url:"<?php echo $this->url('system',array('controller'=>'menu','action'=>'permi'));?>",
+			    url:"<?php echo $this->url('system',array('controller'=>'menu','action'=>'set'));?>",
 			    data:{id:id,str:str},
 			    async:false
 			    });

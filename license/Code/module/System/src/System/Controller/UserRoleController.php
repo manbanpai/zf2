@@ -13,7 +13,7 @@ use System\Model\UserRole;
 
 use System\Model\UserRoleTable;
 
-class UserRoleController extends Controller 
+class UserRoleController extends AbstractActionController 
 {
 	protected $userRoleTable;
 	protected $menuTable;
