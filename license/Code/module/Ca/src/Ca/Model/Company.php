@@ -68,6 +68,18 @@ class Company implements InputFilterAwareInterface
                     array('name' => 'Int'),
                 )
             )));
+            $inputFilter->add(array(
+                'name' => 'company_name',
+                'required' => true,
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim')
+                ),
+                'validators' => array(
+                    array('name' => 'NotEmpty'),
+                ),
+                'error_message' => '不能为空。',
+            ));
             $this->inputFilter = $inputFilter;
         }        
         return $this->inputFilter;

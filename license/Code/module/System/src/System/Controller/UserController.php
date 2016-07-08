@@ -15,11 +15,14 @@ use Zend\Mvc\Controller\AbstractActionController;
 
 use System\Model\UserTable;
 
+use Common\Helper\Helper;
+
 class UserController extends AbstractActionController
 {
 	protected $userTable;
 	protected $userRoleTable;
 	
+	//录入
 	public function addAction()
 	{
 		
@@ -38,7 +41,8 @@ class UserController extends AbstractActionController
 				$user->exchangeArray($form->getData());
 				//对特殊数据进行处理
 				$user->createtime = time();
-				$user->password_rand = $this->getRange(4);
+				$range = new Helper();
+				$user->password_rand = $range->getRange(4);
 				$user->password = substr(md5(md5($user->password).$user->password_rand),2,28);
 				$this->getUserTable()->saveUser($user);
 				return $this->redirect()->toRoute('system',array('controller'=>'user'));
@@ -48,6 +52,7 @@ class UserController extends AbstractActionController
 		return array('form'=>$form);
 	}
 	
+	//编辑
 	public function editAction()
 	{
 		$id = (int) $this->params()->fromRoute('id',0);
@@ -97,6 +102,7 @@ class UserController extends AbstractActionController
 		return array('id'=>$id,'form'=>$form);
 	}
 	
+	//删除
 	public function deleteAction()
 	{
 		$id = (int)$this->params()->fromRoute('id',0);
@@ -111,6 +117,7 @@ class UserController extends AbstractActionController
 		}
 	}
 	
+	//列表
 	public function indexAction()
 	{
 		$paginator = $this->getUserTable()->fetchAll(array(
@@ -126,11 +133,12 @@ class UserController extends AbstractActionController
 		//设置当前页，如果不存在页面则默认设置为第一页
 		$paginator->setCurrentPageNumber((int)$this->params()->fromQuery('page',1));
 		//设置每个分页将显示的记录行数
-		$paginator->setItemCountPerPage(10);
+		$paginator->setItemCountPerPage(5);
 		$view = new ViewModel(array('paginator'=>$paginator));
 		return $view;
 	}
 	
+	//设置表单中Select元素
 	public function setUserRoleList($form){
 		$data = $this->getUserRoleTable()->fetchAll(array('order'=>'id desc'));
 		$arr = array();
@@ -155,22 +163,5 @@ class UserController extends AbstractActionController
 			$this->userRoleTable = $sm->get('System\Model\UserRoleTable');
 		}
 		return $this->userRoleTable;
-	}
-	
-	public function getRange($int){
-		$int = (int)$int;
-		if($int){
-			$lower = range('a', 'z');
-			$upper = range('A', 'Z');
-			$number = range(0,9);
-			$range = array_merge($lower,$upper,$number);
-			$count = count($range);
-			$rand = "";
-			for($i=0;$i<$int;$i++){
-				$n = rand(0, $count);
-				$rand .= $range[$n];
-			}
-			return $rand;
-		}
 	}
 }

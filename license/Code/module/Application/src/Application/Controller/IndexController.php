@@ -9,8 +9,6 @@
 
 namespace Application\Controller;
 
-use Zend\I18n\Filter\NumberFormat;
-
 use Zend\Db\Sql\Sql;
 
 use Zend\Db\TableGateway\TableGateway;
@@ -30,6 +28,7 @@ class IndexController extends AbstractActionController
 	
 	protected $container;
 	
+	//获取session
 	private function getContainer()
 	{
 		if (!$this->container) {
@@ -38,22 +37,60 @@ class IndexController extends AbstractActionController
 		return $this->container;
 	}
 	
+	//欢迎页
 	public function welcomeAction()
 	{
-		//$filter = new NumberFormat("de_DE");
-		
+	    $session = $this->getContainer();
+	    $roleId = $userId = 0;
+	    
+	    if($session->offsetExists('_adminRoleId')){
+	        $roleId = $session->offsetGet('_adminRoleId');
+	    }
+	    
+	    if($session->offsetExists('_adminUserId')){
+	        $userId = $session->offsetGet('_adminUserId');
+	    }
+	    
+	    //用户数量
 		$user = $this->select('lic_user',null,'id desc',5);
 		
 		$userConut = $this->select('lic_user');
-		//echo $filter->filter(1234567.8912346);
+		
+		//日志数量
+		$time90 = time()-90*24*3600;
+		$log = array(
+		    'display'=>'1',
+		    "url!='application/index/welcome'",
+		    "url!='log/log/index'",
+		    "create_time>$time90",
+		);
+		
+		if($roleId != 1){
+		    $log = array_merge($log,array('user_id'=>$userId));
+		}
+		$logCount = $this->select('lic_log',$log);
+	   
+		//license数量
+		$license = $this->select('lic_license',null,'id desc',5);
+		$licenseCount = $this->select('lic_license');
+		
+		//证书数量
+		$ca = $this->select('lic_certficate',null,'id desc',5);
+		$caCount = $this->select('lic_certficate');
 		
 		$view = new ViewModel(array(
 			'user'=>$user,
-			'userCount'=>count($userConut),	
+		    'license'=>$license,
+		    'ca'=>$ca,
+			'userCount'=>iterator_count($userConut),	
+		    'logCount'=>iterator_count($logCount),
+		    'licenseCount'=>iterator_count($licenseCount),
+		    'caCount'=>iterator_count($caCount),
 			));
 		return $view;
 	}
 	
+	//列表页
     public function indexAction()
     {
     	$data = $this->select('lic_user_menu', array('display'=>'Y'));
@@ -81,7 +118,7 @@ class IndexController extends AbstractActionController
         $variables = array(
         		'data'=>$data,
         		'username'=>$_adminUserName,
-        		'id'=>$_adminUserName,
+        		'id'=>$_adminUserId,
         		);
         $view->setVariables($variables);
 

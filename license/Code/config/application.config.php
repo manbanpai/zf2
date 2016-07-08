@@ -10,8 +10,12 @@ return array(
     'modules' => array(
         'Application',
 		'Ca',
+		'Member',
+		'License',
     	'System',
     	'MyAcl',
+    	'Base',	
+    	'Log',	
     ),
 
     // These are various options for the listeners attached to the ModuleManager

@@ -6,6 +6,8 @@ use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
 
 use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\Validator\NotEmpty;
+use Zend\Validator\StringLength;
 
 class Menu implements InputFilterAwareInterface
 {
@@ -70,10 +72,22 @@ class Menu implements InputFilterAwareInterface
 						'name'=>'StringLength',
 						'options'=>array(
 							'encoding'=>'UTF-8',
-							'min'=>0,
-							'max'=>255,
+							'min'=>1,
+							'max'=>25,
+						    'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入1个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入25个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。'
+				            )
+				        )
+				    ),
 					/* array(
 					 'name'	=> 'Db\NoRecordExists',
 						'options' => array(
@@ -96,15 +110,27 @@ class Menu implements InputFilterAwareInterface
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
-								'encoding'=>'UTF-8',
-								'min'=>0,
-								'max'=>255,
+							'encoding'=>'UTF-8',
+							'min'=>1,
+							'max'=>25,
+						    'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入1个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入25个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。'
+				            )
+				        )
+				    ),
 				)
 			));
 			
-			$inputFilter->add(array(
+			/* $inputFilter->add(array(
 				'name'=>'url',
 				'required'=>true,
 				'filters'=>array(
@@ -115,16 +141,28 @@ class Menu implements InputFilterAwareInterface
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
-								'encoding'=>'UTF-8',
-								'min'=>0,
-								'max'=>1024,
+							'encoding'=>'UTF-8',
+							'min'=>1,
+							'max'=>100,
+						     'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入1个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入100个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。'
+				            )
+				        )
+				    ),
 				)
 			));
-			
+			*/
 			$inputFilter->add(array(
-				'name'=>'acl',
+				'name'=>'controller',
 				'required'=>true,
 				'filters'=>array(
 					array('name'=>'StripTags'),
@@ -134,13 +172,25 @@ class Menu implements InputFilterAwareInterface
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
-								'encoding'=>'UTF-8',
-								'min'=>0,
-								'max'=>255,
+							'encoding'=>'UTF-8',
+							'min'=>1,
+							'max'=>30,
+						    'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入1个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入30个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。'
+				            )
+				        )
+				    ),
 				)
-			));
+			)); 
 	
 			$this->inputFilter = $inputFilter;
 		}

@@ -6,6 +6,10 @@ use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
 
 use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\Validator\NotEmpty;
+use Zend\Validator\Digits;
+use Zend\Validator\EmailAddress;
+use Zend\Validator\StringLength;
 
 class User implements InputFilterAwareInterface{
 	public $id;
@@ -102,8 +106,20 @@ class User implements InputFilterAwareInterface{
 							'encoding'=>'UTF-8',
 							'min'=>6,
 							'max'=>20,
+						    'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入6个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入20个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 					/* array(
 					 'name'	=> 'Db\NoRecordExists',
 						'options' => array(
@@ -124,9 +140,21 @@ class User implements InputFilterAwareInterface{
 						'options'=>array(
 							'encoding'=>'UTF-8',
 							'min'=>6,
-							'max'=>32,	
+							'max'=>32,
+						    'message'=>array(
+						        StringLength::TOO_SHORT => '字符太少，请输入6个字符以上。',
+						        StringLength::TOO_LONG => '字符太多，请输入62个字符以内。'
+						    ),
 							)	
-						),	
+						),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 					),	
 				));
 			
@@ -138,6 +166,14 @@ class User implements InputFilterAwareInterface{
 						'name'=>'NoRecordExists'
 						'options'=>	
 						)	*/
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 					) 
 				));
 			
@@ -157,6 +193,14 @@ class User implements InputFilterAwareInterface{
 								'max'=>128,
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 				)
 				));
 			
@@ -167,15 +211,34 @@ class User implements InputFilterAwareInterface{
 					array('name'=>'Digits')
 					),
 				'validators'=>array(
-					array('name'=>'Digits'),
+					array(
+					    'name'=>'Digits',
+					    'options'=>array(
+					        'message'=>array(
+					            Digits::NOT_DIGITS =>'不是数字。'
+					        )
+					    )
+					),
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
 							'encoding' => 'UTF-8',
 							'min'=>7,
-							'max'=>8,	
+							'max'=>8,
+						    'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入7个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入8个字符。'
+						    )
 						)		
-					),	
+					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 					)	
 				));
 			
@@ -186,15 +249,34 @@ class User implements InputFilterAwareInterface{
 					array('name'=>'Digits')
 					),
 				'validators'=>array(
-					array('name'=>'Digits'),
+					array(
+					    'name'=>'Digits',
+					    'options'=>array(
+					        'message'=>array(
+					            Digits::NOT_DIGITS =>'不是数字。'
+					        )
+					    )
+					),
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
 							'encoding' => 'UTF-8',
 							'min'=>11,
 							'max'=>11,
+						    'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入11个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入11个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 				)
 				));
 			
@@ -209,11 +291,23 @@ class User implements InputFilterAwareInterface{
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
-								'encoding' => 'UTF-8',
-								'min'=>0,
-								'max'=>128,
+							'encoding' => 'UTF-8',
+							'min'=>0,
+							'max'=>128,
+					        'message'=>array(
+					           StringLength::TOO_SHORT => '字符太少，请输入0个字符。',
+					           StringLength::TOO_LONG => '字符太多，请输入128个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 				)
 			));
 			
@@ -224,15 +318,34 @@ class User implements InputFilterAwareInterface{
 					array('name'=>'Digits')
 				),
 				'validators'=>array(
-					array('name'=>'Digits'),
+					array(
+					    'name'=>'Digits',
+					    'options'=>array(
+					        'message'=>array(
+					            Digits::NOT_DIGITS =>'不是数字。'
+					        )
+					    )
+					),
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
 							'encoding' => 'UTF-8',
 							'min'=>0,
 							'max'=>16,
+						    'message'=>array(
+						        StringLength::TOO_SHORT => '字符太少，请输入0个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入16个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 				)
 			));
 			
@@ -244,13 +357,40 @@ class User implements InputFilterAwareInterface{
 					array('name'=>'StringTrim'),
 				),
 				'validators'=>array(
-					array('name'=>'EmailAddress'),
+					array(
+                        'name' => 'EmailAddress',
+                        'options' => array(
+                            'messages' => array(
+                                EmailAddress::INVALID => '无效的类型。',
+                                EmailAddress::INVALID_FORMAT => '输入不是有效的电子邮件地址。',
+                                EmailAddress::INVALID_HOSTNAME => '主机名不是一个有效的主机名的电子邮件地址',
+                                //EmailAddress::INVALID_MX_RECORD => '主机名似乎没有任何有效的电子邮件地址或一个MX记录',
+                                //EmailAddress::INVALID_SEGMENT => '',                                
+                                //EmailAddress::DOT_ATOM => '',
+                                //EmailAddress::QUOTED_STRING => '',
+                                //EmailAddress::INVALID_LOCAL_PART => '',
+                                EmailAddress::LENGTH_EXCEEDED => '输入超过允许长度',                                
+                            )
+                        )
+                    ),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
 							'encoding' => 'UTF-8',
 							'min'=>0,
 							'max'=>128,
+						    'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入5个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入128个字符。'
+						    )
 						)
 					),
 				)
@@ -263,15 +403,34 @@ class User implements InputFilterAwareInterface{
 					array('name'=>'Digits'),
 				),
 				'validators'=>array(
-					array('name'=>'Digits'),
+					array(
+					    'name'=>'Digits',
+					    'options'=>array(
+					        'message'=>array(
+					            Digits::NOT_DIGITS =>'不是数字。',
+					        )
+					    )
+					),
 					array(
 						'name'=>'StringLength',
 						'options'=>array(
 							'encoding' => 'UTF-8',
-							'min'=>0,
-							'max'=>32,
+							'min'=>5,
+							'max'=>13,
+						    'messages' => array(
+						        StringLength::TOO_SHORT => '字符太少，请输入5个字符。',
+						        StringLength::TOO_LONG => '字符太多，请输入13个字符。'
+						    )
 						)
 					),
+				    array(
+				        'name'=>'NotEmpty',
+				        'options'=>array(
+				            'message'=>array(
+				                NotEmpty::IS_EMPTY => '不能为空。',
+				            ),
+				        )
+				    ),
 				)
 			));
 			

@@ -8,7 +8,8 @@ return array(
 			'System\Controller\UserRole'=>'System\Controller\UserRoleController',
 			'System\Controller\User'=>'System\Controller\UserController',
         ),
-    ),
+    ),	
+		
     'router' => array(
         'routes' => array(
             'system' => array(

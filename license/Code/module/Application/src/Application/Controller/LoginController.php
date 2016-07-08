@@ -74,7 +74,7 @@ class LoginController extends AbstractActionController
 					$session->offsetSet('_adminUserId',$data['id']);
 					$session->offsetSet('_adminUserName', $data['username']);
 					$session->offsetSet('_adminRoleId', $data['role_id']);
-
+				
 					$values = array(
 						'last_login_ip'=>'127.0.0.1',
 						'last_login_time'=>time(),
@@ -96,11 +96,13 @@ class LoginController extends AbstractActionController
 	
 	public function outAction()
 	{
+		$id = (int)$this->params()->fromRoute('id');
 		$session = new Container('login');
 		if($session->offsetExists('_adminRoleId') && $session->offsetExists('_adminUserId')){
-			$this->update('lic_user', array('online_status'=>'N'),array('id'=>$session->offsetExists('_adminUserId')));
+			$this->update('lic_user', array('online_status'=>'N'),array('id'=>$id));
 			$session->offsetUnset('_adminRoleId');
 			$session->offsetUnset('_adminUserId');
+			$session->offsetUnset('_adminUserName');
 			$this->redirect()->toRoute('application');
 		}
 	}

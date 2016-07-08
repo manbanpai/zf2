@@ -12,7 +12,7 @@ class UserForm extends Form{
 			'name'=>'submit',
 			'type'=>'Submit',
 			'attributes'=>array(
-				'value'=>'Submit',
+				'value'=>'登录',
 				'id'=>'submitbutton',
 				'class'=>'btn btn-lg btn-primary btn-block',
 				),
@@ -27,7 +27,7 @@ class UserForm extends Form{
 			'attributes'=>array(
 				'class'=>'form-control',
 				'value'=>"",
-				'placeholder'=>"Password",
+				'placeholder'=>"密码",
 				'required' => 'required',
 				)
 			));
@@ -40,7 +40,7 @@ class UserForm extends Form{
 				),
 			'attributes'=>array(
 				'class'=>'form-control',
-				'placeholder'=>"Username", 
+				'placeholder'=>"用户名", 
 				'required' => 'required', 
 				'autofocus'
 				)

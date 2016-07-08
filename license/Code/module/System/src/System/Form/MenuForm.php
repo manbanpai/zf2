@@ -54,7 +54,7 @@ class MenuForm extends Form
 		));
 		
 		$this->add(array(
-			'name'=>'url',
+			'name'=>'controller',
 			'type'=>'Text',
 			'options'=>array(
 			//'label'=>'Username',

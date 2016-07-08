@@ -20,6 +20,7 @@ class UserRoleController extends AbstractActionController
 	protected $menuPermiTable;
 	protected $userTable;
 	
+	//编辑
 	public function editAction()
 	{
 		$id = (int) $this->params()->fromRoute('id',0);
@@ -37,9 +38,11 @@ class UserRoleController extends AbstractActionController
 		$form = new UserRoleForm();
 		$form->bind($userRole);
 		$form->get('submit')->setValue('Edit');
+		//获取菜单
 		$value = $this->getMenuTable()->fetchAll(array(
 				'where'=>array('display'=>'Y'),
 				));
+		//获取菜单权限
 		$permi = $this->getMenuPermiTable()->fetchAll();
 		$permiss = array();
 		foreach($permi as $p){
@@ -53,7 +56,7 @@ class UserRoleController extends AbstractActionController
 			$form->setInputFilter($userRole->getInputFilter());
 			$acl = $request->getPost('acl');
 			$form->setData($request->getPost());
-
+            
 			if($form->isValid()){
 				$userRole->acl = ','.implode(',',$acl).',';
 				$userRole->createtime = $time;
@@ -71,6 +74,7 @@ class UserRoleController extends AbstractActionController
 		return $view;
 	}
 	
+	//录入
 	public function addAction()
 	{
 		$form = new UserRoleForm();
@@ -107,6 +111,7 @@ class UserRoleController extends AbstractActionController
 		return $view;
 	}
 	
+	//删除
 	public function deleteAction()
 	{
 		$id = (int) $this->params()->fromRoute('id',0);
@@ -121,6 +126,7 @@ class UserRoleController extends AbstractActionController
 		}
 	}
 	
+	//列表
 	public function indexAction(){
 
 		$paginator = $this->getUserRoleTable()->fetchAll(array(

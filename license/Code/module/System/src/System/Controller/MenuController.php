@@ -16,6 +16,7 @@ class MenuController extends AbstractActionController
 	protected $menuTable;
 	protected $menuPermiTable;
 	
+	//设置
 	public function setAction()
 	{
 		$request = $this->getRequest();
@@ -46,7 +47,14 @@ class MenuController extends AbstractActionController
 							'import'=>'导入',
 							'statistics'=>'统计',
 							'backup'=>'备份',
-							'set'=>'设置'
+							'set'=>'设置',
+							'download'=>'下载',
+					        'apply'=>'License申请',
+					        'audit'=>'审核',
+					        'licensedown'=>'License下载',
+					        'certdown'=>'证书下载',
+					        'editIssuer'=>'颁发者修改',
+					        'addIssuer'=>'颁发者添加',
 					);
 					foreach($operation as $o){
 						$s = explode('_', $o);
@@ -66,6 +74,7 @@ class MenuController extends AbstractActionController
 		return $view;
 	}
 	
+	//删除
 	public function deleteAction()
 	{
 		$id = (int)$this->params()->fromRoute('id',0);
@@ -86,6 +95,7 @@ class MenuController extends AbstractActionController
 		}
 	}
 	
+	//录入
 	public function addAction()
 	{
 		$form = new MenuForm();
@@ -100,9 +110,10 @@ class MenuController extends AbstractActionController
 		
 			if($form->isValid()){
 				$menu->exchangeArray($form->getData());
-				if($request->getPost('url')){
-					$url = explode('/', $request->getPost('url'));
-					$menu->controller = $url[0];
+				if($request->getPost('controller')){
+					$menu->url = $request->getPost('controller').'/index';
+					$menu->acl = $request->getPost('controller').'index';
+					
 				}
 				$this->getMenuTable()->saveMenu($menu);
 				return $this->redirect()->toRoute('system',array('controller'=>'menu'));
@@ -116,6 +127,7 @@ class MenuController extends AbstractActionController
 		return $view;
 	}
 	
+	//编辑
 	public function editAction()
 	{
 		$id = (int) $this->params()->fromRoute('id',0);
@@ -143,11 +155,37 @@ class MenuController extends AbstractActionController
 			
 			if($form->isValid()){
 				
-				if($request->getPost('url')){
-					$url = explode('/', $request->getPost('url'));
-					$menu->controller = $url[0];
+			    if($request->getPost('controller')){
+					$menu->url = $request->getPost('controller').'/index';
+					$menu->acl = $request->getPost('controller').'_index';
 				}
-				$this->getMenuTable()->saveMenu($menu);
+				
+				if($request->getPost('pid') == 0){
+				    $display = $request->getPost('display');
+				    if($display == 'N'){
+				        $child = $this->getMenuTable()->fetchAll(array(
+                            'where'=>array('pid'=>$id),				            
+				        ));
+				        foreach($child as $c){
+				            $c->display = 'N';
+				            $this->getMenuTable()->saveMenu($c);
+				        }
+				    }
+				    $this->getMenuTable()->saveMenu($menu);
+				}else{
+				    $parent = $this->getMenuTable()->fetchAll(array(
+				        'where'=>array('id'=>$request->getPost('pid')),
+				    ));
+				    $parent = iterator_to_array($parent);
+				    if($parent[0]->display == 'N'){
+				        echo "<script>";
+				        echo "alert('请先修改父栏目可见！');";
+				        echo "</script>";
+				        
+				    }else{
+				        $this->getMenuTable()->saveMenu($menu);
+				    }
+				}
 				
 				return $this->redirect()->toRoute('system',array('controller'=>'menu'));
 			}
@@ -161,6 +199,7 @@ class MenuController extends AbstractActionController
 		return $view;
 	}
 
+	//列表
 	public function indexAction()
 	{
 		$paginator = $this->getMenuTable()->fetchAll();
@@ -179,9 +218,10 @@ class MenuController extends AbstractActionController
 		return $view;
 	}
 	
+	//设置表单中Select元素
 	public function setMenuList($form)
 	{
-		$data = $this->getMenuTable()->fetchAll();
+		$data = $this->getMenuTable()->fetchAll(array('where'=>array('pid'=>0)));
 		$arr = array();
 		foreach($data as $d){
 			$arr[] = '请选择';

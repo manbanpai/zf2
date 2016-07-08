@@ -1,5 +1,5 @@
 <?php
-$title = 'Edit UserRole';
+$title = '修改角色';
 $this->headTitle($title);
 ?>
 <div class="btn-group" role="group" aria-label="...">
@@ -18,7 +18,7 @@ $this->headTitle($title);
 		<?php echo $this->formHidden($form->get('id'));?>
 	</div>
 	<div class="form-group">
-		<label>Rolename</label>
+		<label>角色名</label>
 		<?php echo $this->formRow($form->get('role_name'));?>
 	</div>
 	<?php
@@ -42,7 +42,7 @@ $this->headTitle($title);
 			  		<?php if($n->pid == $m->id):?>
 			  		<ul style="list-style:none">
 			  		<li>
-						<input style="float:left" type="checkbox" name='acl[]' id="tall<?php echo $k+1;?>-<?php echo $ke+1?>" <?php if(in_array($n->acl,$acl)){echo 'checked';}?> value="<?php echo $n->acl?>">
+						<input style="float:left" type="checkbox" name='acl[]' id="tall<?php echo $k+1;?>-<?php echo $ke+1?>" <?php if(in_array($n->acl,$acl)){echo 'checked';}?> value="<?php echo $n->acl?>"5>
 						<label style="float:left" for="tall<?php echo $k+1;?>-<?php echo $ke+1?>"><?php echo $n->name;?></label>
 						<ul style="float:left;list-style:none">
 			  				<?php $key=0; foreach($permi as $p):?>
@@ -106,15 +106,13 @@ $this->headTitle($title);
 
         } else if (all && !checked) {
 
-          parent.children('input[type="checkbox"]').prop("checked", checked);
-          parent.children('input[type="checkbox"]').prop("indeterminate", (parent.find('input[type="checkbox"]:checked').length > 0));
           checkSiblings(parent);
 
         } else {
 
           el.parents("li").children('input[type="checkbox"]').prop({
-            indeterminate: true,
-            checked: false
+            indeterminate: false,
+            checked: true
           });
 
         }

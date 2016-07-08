@@ -13,6 +13,10 @@ class AreaTable extends AbstractTableGateway
         $this->tableGateway = $tableGateway;
     }
     
+    /**
+     * 获取地区
+     * @param number $pid
+     */
     public function getArea($pid=0)
     {
         $select = $this->tableGateway->getSql()->select();
@@ -21,6 +25,11 @@ class AreaTable extends AbstractTableGateway
         return $resultSet;
     }
     
+    /**
+     * 返回下拉框
+     * @param number $pid
+     * @return multitype:string NULL
+     */
     public function getAreaToSelect($pid=0)
     {
         $country = $this->getArea($pid);

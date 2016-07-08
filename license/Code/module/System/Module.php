@@ -10,12 +10,19 @@ use System\Model\MenuTable;
 use System\Model\Menu;
 
 use System\Model\UserRoleTable;
+
 use System\Model\UserRole;
+
 use System\Model\User;
+
 use System\Model\UserTable;
+
 use Zend\Mvc\ModuleRouteListener;
+
 use Zend\Mvc\MvcEvent;
+
 use Zend\Db\ResultSet\ResultSet;
+
 use Zend\Db\TableGateway\TableGateway;
 
 class Module{
@@ -38,7 +45,8 @@ class Module{
 		return array(
 			'Zend\Loader\StandardAutoloader'=>array(
 				'namespaces'=>array(
-					__NAMESPACE__=>__DIR__.'/src/'.__NAMESPACE__,								
+					__NAMESPACE__=>__DIR__.'/src/'.__NAMESPACE__,
+				    'Common'=>__DIR__.'/../../vendor/common/src',
 				)
 			)
 		);

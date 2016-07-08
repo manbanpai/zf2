@@ -21,6 +21,7 @@ class MyAclPlugin extends AbstractPlugin
 {
     protected $sesscontainer;    
 
+    //获取session
     private function getSessContainer()
     {
         if (!$this->sesscontainer) {
@@ -29,6 +30,15 @@ class MyAclPlugin extends AbstractPlugin
         return $this->sesscontainer;
     }
 
+    /**
+    * 函数用途描述
+    * 系统进程中监听该事件
+    * 如果用户拥有该操作权限则继续执行
+    * 如果没有提示无权限
+    * @date: 2016年6月30日
+    * @author: cuik
+    * @param: object
+    */
     public function doAuthorization($e,$sm)
     {
     	$sess = $this->getSessContainer();
@@ -66,7 +76,9 @@ class MyAclPlugin extends AbstractPlugin
         $acl->addResource('system'); // System 模块
         $acl->addResource('ca');
         $acl->addResource('log');
-        $acl->addResource('membercompany');
+        $acl->addResource('member');
+        $acl->addResource('base');
+        $acl->addResource('license');
 
         ################ 设置权限 #######################
         // $acl->allow('角色', '资源', '控制器:方法');
@@ -83,80 +95,110 @@ class MyAclPlugin extends AbstractPlugin
 	       	$acl->allow($role, 'application', 'index:index');
 	       	$acl->allow($role, 'application', 'index:welcome');
 	       	$acl->allow($role, 'application', 'login:out');
-
-	        foreach($aclArray as $a){
-	        	if(strpos($a, '_')){
-	        		$tmp = explode('_',$a);
-	        		if($tmp[1] == 'index'){
-	        			$where = array('acl'=>$a);
-	        			$permi = $this->select($adapter, 'lic_user_menu',$where);
-	        			
-	        			if(isset($permi['module']) && !empty($permi['module'])){
-	        				$filter = new SeparatorToSeparator('_',':');
-	        				$url = $filter->filter($permi['acl']);
-	        				$acl->allow($role, $permi['module'], $url);
-	        				//echo $role.'=='.$permi['module'].'=='.$url."<br>";
-	        			}
-	        		}else{
-	        			$where = array('operation'=>$a);
-	        			$permi = $this->select($adapter, 'lic_user_menu',$where,
-	        					array(
-	        							'name'=>array('p'=>'lic_user_permi'),
-	        							'on'=>'t.id=p.menu_id',
-	        							'columns'=>array('operation'=>'operation'),
-	        					));
-	        			
-	        			if(isset($permi['module']) && !empty($permi['module'])){
-	        				$filter = new SeparatorToSeparator('_',':');
-	        				$url = $filter->filter($permi['operation']);
-	        				$acl->allow($role, $permi['module'], $url);
-	        				//echo $role.'=='.$permi['module'].'=='.$url."<br>";
-	        			}
-	        		}
-	        	}else{
-	        		$where = array('acl'=>$a);
-	        		$permi = $this->select($adapter, 'lic_user_menu',$where);
-	        		
-	        		if(isset($permi['module']) && !empty($permi['module'])){
-	        			$filter = new SeparatorToSeparator('_',':');
-	        			$url = $filter->filter($permi['acl']);
-	        			$acl->allow($role, $permi['module'], $url);
-	        			//echo $role.'=='.$permi['module'].'=='.$url."<br>";
-	        		}
-	        	}
-	        }
+			
+			$p = $this->getPath($e);
+			
+			$row = $this->select($adapter, 'lic_user_menu',array('controller'=>$p['controller']));
+			if($row['display'] == 'Y'){
+			
+    			if(isset($p['action'])){
+    			    $a = explode('_',$p['action']);
+    			    if(is_array($a) && $a[0] == 'acl'){
+    			        $acl->allow($role,$p['module'],$p['controller'].':'.$p['action']);
+    			    }
+    			}
+    			
+    	        foreach($aclArray as $a){
+    	        	if(strpos($a, '_')){
+    	        		$tmp = explode('_',$a);
+    	        		if($tmp[1] == 'index'){
+    	        			$where = array('acl'=>$a);
+    	        			$permi = $this->select($adapter, 'lic_user_menu',$where);
+    	        			
+    	        			if(isset($permi['module']) && !empty($permi['module'])){
+    	        				$filter = new SeparatorToSeparator('_',':');
+    	        				$url = $filter->filter($permi['acl']);
+    	        				$acl->allow($role, $permi['module'], $url);
+    	        				//echo $role.'=='.$permi['module'].'=='.$url."<br>";
+    	        			}
+    	        		}else{
+    	        			$where = array('operation'=>$a);
+    	        			$permi = $this->select($adapter, 'lic_user_menu',$where,
+    	        					array(
+    	        							'name'=>array('p'=>'lic_user_permi'),
+    	        							'on'=>'t.id=p.menu_id',
+    	        							'columns'=>array('operation'=>'operation'),
+    	        					));
+    	        			
+    	        			if(isset($permi['module']) && !empty($permi['module'])){
+    	        				$filter = new SeparatorToSeparator('_',':');
+    	        				$url = $filter->filter($permi['operation']);
+    	        				$acl->allow($role, $permi['module'], $url);
+    	        				//echo $role.'=='.$permi['module'].'=='.$url."<br>";
+    	        			}
+    	        		}
+    	        	}else{
+    	        		$where = array('acl'=>$a);
+    	        		$permi = $this->select($adapter, 'lic_user_menu',$where);
+    	        		
+    	        		if(isset($permi['module']) && !empty($permi['module'])){
+    	        			$filter = new SeparatorToSeparator('_',':');
+    	        			$url = $filter->filter($permi['acl']);
+    	        			$acl->allow($role, $permi['module'], $url);
+    	        		}
+    	        	}
+    	        }
+			}
         }
-      
-        $controller = $e->getTarget();
-        $controllerClass = get_class($controller);
-      
-        $moduleName = strtolower(substr($controllerClass, 0, strpos($controllerClass, '\\')));
-        $routeMatch = $e->getRouteMatch();
         
-        $actionName = strtolower($routeMatch->getParam('action', 'not-found')); // get the action name
-        $controllerName = $routeMatch->getParam('controller', 'not-found');     // get the controller name
-        $cname = explode('\\', $controllerName);
-        $cn = array_pop($cname);
-        $controllerName = strtolower($cn);
+        $path = $this->getPath($e);
        
-        if (!$acl->isAllowed($role, $moduleName, $controllerName.':'.$actionName)){
-        	 echo "<div class='container'>
+        if (!$acl->isAllowed($role, $path['module'],$path['controller'].':'. $path['action'])){
+        	if($role == 'anonymous'){
+        		$this->getController()->redirect()->toRoute('application');
+        	}
+        	echo "<div class='container'>
 		            	<h1><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true' style='color:red'></span>
 		            		您没有该操作权限！请联系管理员授权.
 		            	</h1>
 		        	</div>"; 
-        	/* $router = $e->getRouter();
-        	// $url    = $router->assemble(array(), array('name' => 'Login/auth')); // assemble a login route
-        	$url    = $router->assemble(array(), array('name' => 'application'));
-        	
-        	$response = $e->getResponse();
-        	$response->setStatusCode(302);
-        	// redirect to login page or other page.
-        	$response->getHeaders()->addHeaderLine('Location', $url); */
         	$e->stopPropagation();
         }
+        
     }
     
+    /**
+    * 函数用途描述
+    * 该方法返回一个有模块、控制器、操作组成的数组
+    * @date: 2016年6月30日
+    * @author: cuik
+    * @param: Object
+    * @return: array
+    */
+    public function getPath($e){
+    	$controller = $e->getTarget();
+    	$controllerClass = get_class($controller);
+    
+    	$moduleName = strtolower(substr($controllerClass, 0, strpos($controllerClass, '\\')));
+    	$routeMatch = $e->getRouteMatch();
+    
+    	$actionName = strtolower($routeMatch->getParam('action', 'not-found')); // get the action name
+    	$controllerName = $routeMatch->getParam('controller', 'not-found');     // get the controller name
+    	$cname = explode('\\', $controllerName);
+    	$cn = array_pop($cname);
+    	$controllerName = strtolower($cn);
+    	return array('module'=>$moduleName,'controller'=>$controllerName,'action'=>$actionName);
+    }
+    
+    /**
+    * 函数用途描述
+    * 数据库查询方法
+    * 返回单挑记录数据
+    * @date: 2016年6月30日
+    * @author: cuik
+    * @param: object string
+    * @return: array
+    */
     public function select($adapter,$table,$where=null,$join=null,$combination = Predicate\PredicateSet::OP_AND)
     {
     	if($table){

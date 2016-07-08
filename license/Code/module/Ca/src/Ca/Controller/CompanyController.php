@@ -8,6 +8,7 @@ use Ca\Model\Company;
 use Ca\File\File;
 use Zend\Form\Form;
 
+
 class CompanyController extends AbstractActionController
 {
     protected $companyTable;
@@ -30,7 +31,7 @@ class CompanyController extends AbstractActionController
         }
         return $this->areaTable;
     }
-    
+        
     public function indexAction()
     {
         $view = new ViewModel();
@@ -102,7 +103,13 @@ class CompanyController extends AbstractActionController
         }
         $form = new CompanyForm();
         $form->elementProvince($this->getAreaTable()->getAreaToSelect(), $company->province);
+        if ($company->province==0){
+            $company->province = -1;
+        }
         $form->elementCity($this->getAreaTable()->getAreaToSelect($company->province), $company->city);
+        if ($company->city==0){
+            $company->city = -1;
+        }
         $form->elementArea($this->getAreaTable()->getAreaToSelect($company->city),$company->area);
         $form->bind($company);
         $form->get('submit')->setAttribute('value', '修改');
@@ -119,18 +126,18 @@ class CompanyController extends AbstractActionController
             $postData['logo'] = $tmplogo;
             
             $form->setData($postData);
-            try {
+            //try {
                 if ($form->isValid()){
                     $this->getCompanyTable()->saveCompany($form->getData());
                     return $this->redirect()->toRoute('ca', array(
                         'controller' => 'company',
                     ));
-                }else{
+                }/* else{
                     throw new \Exception();
-                }
-            }catch (\Exception $e){
-                echo $e->__toString();
-            }            
+                } */
+            //}catch (\Exception $e){
+                //echo $e->__toString();
+            //}            
         }        
         $view = new ViewModel();
         $view->setVariable('form', $form);
@@ -152,13 +159,13 @@ class CompanyController extends AbstractActionController
         }
     }
     
-    public function cityAction()
+    public function aclCityAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()){
             $request = $this->getRequest();
             $data = $request->getPost();
             $id = (int)$data->id;
-            $str = '<select name="city" id="city" onchange="getArea()">';
+            $str = '<select name="city" id="city" onchange="getArea()" class="form-control">';
             $str .= '<option value=0>请选择</option>';
             if ($id){
                 $data = $this->getAreaTable()->getArea($id);
@@ -171,7 +178,7 @@ class CompanyController extends AbstractActionController
             $str .= '</select>';            
             $arr = array(
                 'city'=>$str,
-                'area'=>'<select name="area" id="area"><option value=0>请选择</option></select>',
+                'area'=>'<select name="area" id="area" class="form-control"><option value=0>请选择</option></select>',
             );
             $str = json_encode($arr);
             echo $str;
@@ -179,13 +186,13 @@ class CompanyController extends AbstractActionController
         }
     }
     
-    public function areaAction()
+    public function aclAreaAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()){
             $request = $this->getRequest();
             $data = $request->getPost();
             $id = (int)$data->id;
-            $str = '<select name="area" id="area">';
+            $str = '<select name="area" id="area" class="form-control">';
             $str .= '<option value=0>请选择</option>';
             if ($id){
                 $data = $this->getAreaTable()->getArea($id);

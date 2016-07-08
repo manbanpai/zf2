@@ -1,0 +1,126 @@
+	<script type="text/javascript" src="/js/Highcharts-4.2.5/js/highcharts.js"></script>
+	<ul class="nav nav-tabs">
+	  <?php if($roleId==1):?>
+	  <li role="presentation" class="active"><a href="#index" data-toggle="tab">全部日志</a></li>
+	  <li role="presentation"><a href="#statistics" data-toggle="tab">全部日志统计</a></li>
+	  <?php else:?>
+	   <li role="presentation" class="active"><a href="#index" data-toggle="tab">个人日志</a></li>
+	  <li role="presentation"><a href="#statistics" data-toggle="tab">个人日志统计</a></li>
+	  <?php endif;?>
+	</ul><br/>
+	<div class="alert alert-info alert-dismissible" role="alert">
+			  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  <strong>说明：</strong> 个人日志将显示个人操作轨迹，（除查看日志和欢迎页）.
+			</div>
+	<div class="row">
+	  <div class="col-md-12">
+	    <br>
+	    <div id="myTabContent" class="tab-content">
+	      <div class="tab-pane active in" id="index">
+		      <div class="col-md-11 col-md-push-<?php if($roleId == 1):?>6<?php else:?>7<?php endif;?>">
+			  	<form method="GET" action="<?php echo $this->url('log',array('controller'=>'log','action'=>'index'))?>" class="navbar-form navbar-left" role="search">
+			  	<?php if($roleId == 1):?>
+			  	<div class="form-group">
+		          <select name="user" class="form-control" placeholder="Search">
+		          	<option value="0">选择用户</option>
+		          	<?php foreach($users as $u):?>
+		          		<option value=<?php echo $u->id;?> <?php if($user == $u->id){echo 'selected';}?>><?php echo $u->username?></option>
+		          	<?php endforeach;?>
+		          </select>
+		        </div>
+		        <?php endif;?>
+		        <div class="form-group">
+		          <select name="url" class="form-control" placeholder="Search">
+		          	<option value="0">选择栏目</option>
+		          	<?php foreach($menu as $m):?>
+		          		<option value=<?php echo $m->module.'/'.$m->url?> <?php if($url == $m->module.'/'.$m->url){echo 'selected';}?>><?php echo $m->name?></option>
+		          	<?php endforeach;?>
+		          </select>
+		        </div>
+		        <div class="form-group">
+		          <select name="time" class="form-control" placeholder="Search">
+		          	<option value="0" <?php if($time == 0){echo 'selected';}?>>选择时段</option>
+		          	<option value="1" <?php if($time == '1'){echo 'selected';}?>>1天</option>
+		          	<option value="7" <?php if($time == '7'){echo 'selected';}?>>7天</option>
+		          	<option value="30" <?php if($time == '30'){echo 'selected';}?>>30天</option>
+		          	<option value="90" <?php if($time == '90'){echo 'selected';}?>>90天</option>
+		          </select>
+		        </div>
+		        <button type="submit" class="btn btn-default">Submit</button>
+		      </form>
+			  </div>
+			  <div class="col-md-1">
+			  	<a href="<?php echo $this->url('log',array('controller'=>'log','action'=>'export','url'=>str_replace('/', '_', $url?$url:'all'),'time'=>$time?$time:90,'user'=>$user?$user:'N',));?>" class="btn btn-default" style="margin-top:8px">导出</a>
+			  </div>
+	     	<?php if($paginator):?>
+			<table class="table table-hover">
+			    <tr>
+			        <th></th>
+			        <th>用户名</th>
+			        <th>操作类型</th>
+			        <th>Url</th>
+			        <th>Ip</th>
+			        <th style="width:18%;">创建时间</th>
+			    </tr>
+			    <?php foreach ($paginator as $k=>$p) : ?>
+			        <tr>
+			        	<td><?php echo $k+1?></td>
+			            <td><?php echo $this->escapeHtml($p->username); ?></td>
+			            <td><?php echo $this->escapeHtml($p->cate_name);?></td>
+			            <td><?php echo $this->escapeHtml($p->url);?></td>
+			            <td><?php echo $this->escapeHtml($p->ip);?></td>
+			            <td style="width:18%;"><?php if($p->create_time != 0){echo date('Y/m/d H:i:s',$this->escapeHtml($p->create_time));}?></td>
+			        </tr>
+			    <?php endforeach; ?>
+			</table>
+			<?php endif;?>
+			<?php
+				echo $this->paginationControl(
+						$this->paginator,
+						'sliding',
+						array('log/partial/paginator.phtml','Log')
+						,array('route'=>'log','controller'=>'log','action'=>'index',
+								'url'=>$url,'time'=>$time,'user'=>$user
+								)
+					);
+			?>
+	      </div>
+	
+		  <div class="tab-pane fade" id="statistics">
+	       	<div id="cont" style="width:80%"></div>  
+	      </div>
+	      
+	    </div>
+	  </div>
+	</div>
+<script type="text/javascript">
+$(function () { 
+	var chart; 
+	$(document).ready(function () { 
+		// Build the chart 
+		$('#cont').highcharts({ 
+			chart: { 
+				plotBackgroundColor: null, 
+				plotBorderWidth: null, 
+				plotShadow: false }, 
+			title: { 
+				text: '用户浏览量占有率百分比,总访问量：<?php echo $count?>' }, 
+			tooltip: { pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>' }, 
+			plotOptions: { 
+				pie: { 
+					allowPointSelect: true, 
+					cursor: 'pointer', 
+					dataLabels: { enabled: false }, 
+					showInLegend: true } 
+			}, 
+			series: [{ 
+				type: 'pie', 
+				name: '占有率', 
+				data: [ 
+						<?php echo $str;?>
+					] 
+				}] 
+			}); 
+		}); 
+	});
+</script>

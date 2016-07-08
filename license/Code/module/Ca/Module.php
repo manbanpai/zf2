@@ -10,6 +10,10 @@ use Ca\Model\CompanyTable;
 use Ca\Model\Company;
 use Ca\Model\AreaTable;
 use Ca\Model\Area;
+use Ca\Model\CertficateIssuer;
+use Ca\Model\CertficateIssuerTable;
+use Ca\Model\CertficateTable;
+use Ca\Model\Certficate;
 
 class Module implements ServiceProviderInterface
 {
@@ -31,6 +35,7 @@ class Module implements ServiceProviderInterface
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                    //'Common' =>  __DIR__ . '/../../vendor/common',
                 ),
             ),
         );
@@ -59,6 +64,26 @@ class Module implements ServiceProviderInterface
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Area());
                     return new TableGateway('lic_area', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Ca\Model\CertficateIssuerTable' => function($sm){
+                    $tableGateway = $sm->get('CertficateIssuerTableGateway');
+                    return new CertficateIssuerTable($tableGateway);
+                },
+                'CertficateIssuerTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new CertficateIssuer());
+                    return new TableGateway('lic_certficate_issuer', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Ca\Model\CertficateTable' => function($sm){
+                    $tableGateway = $sm->get('CertficateTableGateway');
+                    return new CertficateTable($tableGateway);
+                },
+                'CertficateTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Certficate());
+                    return new TableGateway('lic_certficate', $dbAdapter, null, $resultSetPrototype);
                 }
             )
         );

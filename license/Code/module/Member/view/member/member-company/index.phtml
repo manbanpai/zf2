@@ -1,0 +1,44 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('member', array('controller'=>'membercompany','action'=>'add'))?>">增加</a>
+</div>
+<br>
+<br>
+<table class="table table-hover">
+  <tr>
+    <th>公司名称</th>
+    <th>联系人</th>
+    <th>电话</th>
+    <th>Email</th>
+    <th>License管理</th>
+    <th>操作</th>
+  </tr>
+  <?php 
+  if (count($this->paginator)):
+  foreach ($this->paginator as $item):
+  ?>
+  <tr>
+    <td><?php echo $this->escapehtml($item->company_name);?></td>
+    <td><?php echo $this->escapehtml($item->contacts);?></td>
+    <td><?php echo $this->escapehtml($item->tel);?></td>
+    <td><?php echo $this->escapehtml($item->email);?></td>
+    <td><a href="<?php echo $this->url('member', array('controller'=>'license','action'=>'add'));?>?comid=<?php echo $item->id;?>">申请</a></td>
+    <td>
+        <a href="<?php echo $this->url('member', array('controller'=>'membercompany','action'=>'edit','id'=>$item->id));?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></a> 
+            <a href="javascript:void(0);" onClick="del('<?php echo $item->id?>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></a>
+    </td>
+  </tr>
+  <?php 
+  endforeach;
+  endif;
+  ?>
+</table>
+
+<?php echo $this->paginationcontrol($this->paginator,'Sliding','pagination.phtml');?>
+
+<script type="text/javascript">
+	function del(id){
+		if(confirm('确定要删除吗？将不可恢复！')){
+			window.location.href='<?php echo $this->url('member', array('controller'=>'membercompany','action'=>'delete'));?>/'+id;
+		}	
+	}
+</script>

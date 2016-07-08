@@ -1,5 +1,5 @@
 <?php
-$title = 'Add Menu';
+$title = '添加栏目';
 $this->headTitle($title);
 ?>
 <div class="btn-group" role="group" aria-label="...">
@@ -17,27 +17,23 @@ $this->headTitle($title);
 		<?php echo $this->formHidden($form->get('id'));?>
 	</div>
 	<div class="form-group">
-		<label>Pid</label>
+		<label>父栏目</label>
 		<?php echo $this->formRow($form->get('pid'))?>
 	</div>
 	<div class="form-group">
-		<label>Name</label>
+		<label>栏目名</label>
 		<?php echo $this->formRow($form->get('name'));?>
 	</div>
 	<div class="form-group">
-		<label>Module</label>
+		<label>模块名</label>
 		<?php echo $this->formRow($form->get('module'))?>
 	</div>
 	<div class="form-group">
-		<label>Acl</label>
-		<?php echo $this->formRow($form->get('acl'))?>
+		<label>控制器</label>
+		<?php echo $this->formRow($form->get('controller'))?>
 	</div>
 	<div class="form-group">
-		<label>Url</label>
-		<?php echo $this->formRow($form->get('url'))?>
-	</div>
-	<div class="form-group">
-		<label>Display</label>
+		<label>是否显示</label>
 		<?php echo $this->formRow($form->get('display'))?>
 	</div>
 	<div class="form-group">

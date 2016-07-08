@@ -109,7 +109,7 @@ class UserForm extends Form{
 		
 		$this->add(array(
 			'name'=>'password',
-			'type'=>'Text',
+			'type'=>'Password',
 			'options'=>array(
 				//'label'=>'Password',
 				),

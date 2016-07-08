@@ -162,6 +162,7 @@ class CompanyForm extends Form
         $province = new Select('province');
         $province->setAttribute('id', 'province');
         $province->setAttribute('onchange', 'getCity()');
+        $province->setAttribute('class', 'form-control');
         $province->setDisableInArrayValidator(true);
         $province->setValue($val);
         $province->setValueOptions($arr);
@@ -173,6 +174,7 @@ class CompanyForm extends Form
         $city = new Select('city');
         $city->setAttribute('id', 'city');
         $city->setAttribute('onchange', 'getArea()');
+        $city->setAttribute('class', 'form-control');
         $city->setDisableInArrayValidator(true);
         $city->setValue($val);
         $city->setValueOptions($arr);
@@ -183,6 +185,7 @@ class CompanyForm extends Form
     {
         $area = new Select('area');
         $area->setAttribute('id', 'area');
+        $area->setAttribute('class', 'form-control');
         $area->setDisableInArrayValidator(true);
         $area->setValue($val);
         $area->setValueOptions($arr);

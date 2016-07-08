@@ -31,8 +31,8 @@
 	echo $this->paginationControl(
 			$this->paginator,
 			'sliding',
-			array('system/partial/paginator.phtml','UserRole')
-			,array('route'=>'userrole','action'=>'index')
+			array('system/partial/paginator.phtml','UserRole'),
+			array('route'=>'system','controller'=>'userrole')
 		);
 ?>
 <script type="text/javascript">

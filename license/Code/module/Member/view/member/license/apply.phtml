@@ -1,0 +1,216 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('member', array('controller'=>'license'));?>" onclick="window.history.back();">返回</a>
+</div>
+<br>
+<br>
+<?php 
+$form = $this->form;
+$form->setAttribute('action', $this->url('member', array('controller'=>'license','action'=>'apply','id'=>$this->id)));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formhidden($form->get('id'));
+echo $this->formhidden($form->get('membercompany_id'));
+?>
+<table class="table">
+    <tr>
+        <td><b>加密公钥序列号：</b></td>
+    </tr>
+    <tr>
+        <td>
+        <?php echo $this->formrow($form->get('certficate_id'));?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>可接入的最大客户端数量：</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('max_client_number'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>软件有效天数：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('soft_valid_days'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>客户详细信息：</b><?php echo $this->formrow($form->get('client_info'));?></td>
+    </tr>
+    <tr>
+        <td>公司名称：</td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('company_name'));?></div>
+                    <div class="col-xs-1"></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>电话：</td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('tel'));?></div>
+                    <div class="col-xs-1"></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>传真：</td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('fax'));?></div>
+                    <div class="col-xs-1"></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>联系人：</td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('contact'));?></div>
+                    <div class="col-xs-1"></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>职业：</td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('profession'))?></div>
+                    <div class="col-xs-1"></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>手机：</td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('mobile'));?></div>
+                    <div class="col-xs-1"></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>Email：</td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('email'));?></div>
+                    <div class="col-xs-1"></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>其他：</td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('other'));?></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器主机/域名：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_domain'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器CPU ID：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_cpu_id'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器IP：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_ip'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器MAC：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_mac'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <?php 
+                echo $this->formSubmit($form->get('submit'));
+            ?>
+        </td>
+    </tr>
+</table>
