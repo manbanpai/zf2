@@ -1,0 +1,151 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('member', array('controller'=>'license', 'action'=>'add'))?>">返回</a>
+</div>
+<br><br>
+<?php 
+$form = $this->form;
+$form->setAttribute('action', $this->url('lic', array('controller'=>'lic','action'=>'acl_index')));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formhidden($form->get('id'));
+?>
+<table class="table">
+    <tr>
+        <td><b>加密公钥：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="row">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('cert'));?></div>
+                <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>可接入的最大客户端数量：</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('max_client_number'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>软件有效天数：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('soft_valid_days'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>客户详细信息：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('client_info'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器主机/域名：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_domain'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器CPU ID：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_cpu_id'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器IP：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_ip'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器MAC：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_mac'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <?php 
+                echo $this->formsubmit($form->get('submit'));
+            ?>
+            
+            <?php 
+                if ($form->has('button1')){
+                    echo $this->formbutton($form->get('button1'));
+            ?>
+            <script type="text/javascript">
+    			$(function(){
+        			$('#btn1').click(function(){
+            			window.location.href = '<?php echo $this->url('lic', array('controller'=>'lic','action'=>'acl_downlicense'))?>';
+            		});
+    			});
+            </script>
+            <?php 
+                }
+            ?>
+            <?php 
+                if ($form->has('button2')){
+                    echo $this->formbutton($form->get('button2'));
+            ?>
+            <script type="text/javascript">
+				$(function(){
+					window.location.href = '';
+				});
+            </script>
+            <?php
+                }
+            ?>
+        </td>
+    </tr>
+</table>

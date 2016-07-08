@@ -1,0 +1,63 @@
+<?php
+namespace Base;
+
+use Base\Model\AreaTable;
+
+use Base\Model\Area;
+
+use Zend\Db\TableGateway\TableGateway;
+
+use Base\Model\Config;
+
+use Zend\Db\ResultSet\ResultSet;
+
+use Base\Model\ConfigTable;
+
+use Zend\Mvc\ModuleRouteListener;
+
+use Zend\Mvc\MvcEvent;
+
+class Module
+{
+	function onBootstrap(MvcEvent $e)
+	{
+		$eventManager = $e->getApplication()->getEventManager();
+		$moduleRouteLister  = new ModuleRouteListener();
+		$moduleRouteLister->attach($eventManager);
+	}
+	
+	public function getConfig()
+	{
+		return include __DIR__.'/config/module.config.php';
+	}
+	
+	public function getAutoloaderConfig()
+	{
+		return array(
+			'Zend\Loader\StandardAutoloader'=>array(
+				'namespaces'=>array(
+					__NAMESPACE__ => __DIR__ .'/src/'.__NAMESPACE__		
+				)		
+			)		
+		);
+	}
+	
+	public function getServiceConfig()
+	{
+		return array(
+			'factories'=>array(
+				'Base\Model\ConfigTable'=>function($sm){
+					$tg = $sm->get('ConfigGateway');
+					$table = new ConfigTable($tg);
+					return $table;			
+				},		
+				'ConfigGateway'=>function($sm){
+					$adapter = $sm->get('Zend\Db\Adapter\Adapter');
+					$rs = new ResultSet();
+					$rs->setArrayObjectPrototype(new Config());
+					return new TableGateway('lic_config', $adapter,null,$rs);
+				},
+			)		
+		);
+	}
+}

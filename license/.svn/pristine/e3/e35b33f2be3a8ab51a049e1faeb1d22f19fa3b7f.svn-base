@@ -1,0 +1,89 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('member', array('controller'=>'license'))?>">返回</a>
+</div>
+<br>
+<br>
+<table class="table table-hover">
+    <tr>
+        <td><b>加密私钥序列号：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml(strtoupper($this->license->serial));?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>可接入的最大客户端数量：</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml($this->license->max_client_number);?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>软件有效天数：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml($this->license->soft_valid_days);?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>客户详细信息：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml($this->license->client_info);?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器主机/域名：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml($this->license->server_domain);?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器CPU ID：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml($this->license->server_cpu_id);?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器IP：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml($this->license->server_ip);?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器MAC：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml($this->license->server_mac);?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>序列号：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml('0X'.strtoupper(dechex($this->license->serialnumber)));?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>创建时间：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <?php echo $this->escapehtml(date('Y-m-d H:i:s',$this->license->create_time));?>
+        </td>
+    </tr>
+</table>

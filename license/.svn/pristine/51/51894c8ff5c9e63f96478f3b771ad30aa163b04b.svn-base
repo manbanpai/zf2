@@ -1,0 +1,95 @@
+<?php
+namespace Log\Controller\Plugin;
+
+use Zend\Session\Container;
+
+use Zend\Db\Sql\Sql;
+
+use \Exception;
+
+use Zend\Log\Writer\Db;
+
+use Zend\Db\Adapter\Adapter;
+
+use Zend\Log\Logger;
+
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+
+class LogPlugin extends AbstractPlugin
+{
+	protected $sesscontainer;
+	
+	private function getSessContainer()
+	{
+		if (!$this->sesscontainer) {
+			$this->sesscontainer = new Container('login');
+		}
+		return $this->sesscontainer;
+	}
+	
+	public function doWriterLog($e,$sm)
+	{
+		$sess = $this->getSessContainer();
+		
+		$adapter = $sm->get('Zend\Db\Adapter\Adapter');
+		
+		$userId = 0;
+		
+		if($sess->offsetExists('_adminUserId')){
+			$userId = (int) $sess->offsetGet('_adminUserId');
+		}
+		
+		$path = $this->getPath($e);
+		
+		$cate_name = array(
+				'index'=>'列表',
+				'add'=>'添加',
+				'edit'=>'编辑',
+				'delete'=>'删除',
+				'download'=>'下载',
+				'export'=>'导出',
+				'import'=>'导入',	
+				'statistics'=>'统计',
+				'backup'=>'备份',
+				'set'=>'设置',
+				'welcome'=>'欢迎页'
+			);
+		
+		$values = array(
+				'user_id'=>$userId,
+				'cate_name'=>$cate_name[$path['action']],
+				'url'=>implode('/', $path),
+				'create_time'=>time(),
+			);
+		
+		$this->insert($adapter,'lic_log', $values);
+		
+	}
+	
+	public function insert($adapter,$table,$values)
+	{
+		if($table && !empty($values)){
+			$sql = new Sql($adapter);
+			$insert = $sql->insert($table);
+			$insert->values($values);
+			$statement = $sql->prepareStatementForSqlObject($insert);
+			$id = $statement->execute();
+			return $id;
+		}
+	}
+	
+	public function getPath($e){
+		$controller = $e->getTarget();
+		$controllerClass = get_class($controller);
+		
+		$moduleName = strtolower(substr($controllerClass, 0, strpos($controllerClass, '\\')));
+		$routeMatch = $e->getRouteMatch();
+		
+		$actionName = strtolower($routeMatch->getParam('action', 'not-found')); // get the action name
+		$controllerName = $routeMatch->getParam('controller', 'not-found');     // get the controller name
+		$cname = explode('\\', $controllerName);
+		$cn = array_pop($cname);
+		$controllerName = strtolower($cn);
+		return array('module'=>$moduleName,'controller'=>$controllerName,'action'=>$actionName);
+	}
+}

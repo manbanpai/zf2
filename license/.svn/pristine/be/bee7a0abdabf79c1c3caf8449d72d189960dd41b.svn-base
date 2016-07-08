@@ -1,0 +1,64 @@
+<?php
+$title = '修改用户';
+$this->headTitle($title);
+?>
+<div class="btn-group" role="group" aria-label="...">
+	<a type="button" class="btn btn-info" href="<?php echo $this->url('system',array('controler'=>'user','action'=>'index'))?>">返回</a>
+	<a type="button" class="btn btn-info" href="<?php echo $this->url('system',array('controler'=>'user','action'=>'add'))?>">添加用户</a>
+</div>
+<h1><?php echo $this->escapeHtml($title);?></h1>
+<?php 
+	$form->setAttribute('action',$this->url('system',array('controller'=>'user','action'=>'edit','id'=>$id)));
+	$form->prepare();
+	
+	echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+		<?php echo $this->formHidden($form->get('id'));?>
+	</div>
+	<div class="form-group">
+		<label>用户名</label>
+		<?php echo $this->formRow($form->get('username'));?>
+	</div>
+	<div class="form-group">
+		<label>密码</label>
+		<?php echo $this->formRow($form->get('password'));?>
+	</div>
+	<div class="form-group">
+		<label>角色</label>
+		<?php echo $this->formRow($form->get('role_id'))?>
+	</div>
+	<div class="form-group">
+		<label>真实名称</label>
+		<?php echo $this->formRow($form->get('realname'))?>
+	</div>
+	<div class="form-group">
+		<label>分机号</label>
+		<?php echo $this->formRow($form->get('extension'))?>
+	</div>
+	<div class="form-group">
+		<label>电话</label>
+		<?php echo $this->formRow($form->get('tel'))?>
+	</div>
+	<div class="form-group">
+		<label>手机</label>
+		<?php echo $this->formRow($form->get('mobile'))?>
+	</div>
+	<div class="form-group">
+		<label>职位</label>
+		<?php echo $this->formRow($form->get('position'))?>
+	</div>
+	<div class="form-group">
+		<label>邮箱</label>
+		<?php echo $this->formRow($form->get('email'))?>
+	</div>
+	<div class="form-group">
+		<label>Qq</label>
+		<?php echo $this->formRow($form->get('qq'))?>
+	</div>
+	<div class="form-group">
+		<?php echo $this->formSubmit($form->get('submit'));?>
+	</div>
+
+	<?php echo $this->form()->closeTag();?>
+

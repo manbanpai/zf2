@@ -1,0 +1,47 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="javascript:void(0);" onclick="window.history.back();">返回</a>
+</div>
+<br>
+<br>
+<?php 
+$form = $this->form;
+$form->setAttribute('action', $this->url('member', array('controller'=>'license','action'=>'sendemail','id'=>$this->id)));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formhidden($form->get('send'));
+echo $this->formhidden($form->get('id'));
+?>
+<table class="table">
+    <tr>
+        <td><b>接收公司名称：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->companyname;?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>接收邮箱地址：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('email'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11">
+                    <?php echo $this->formrow($form->get('submit'));?>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>

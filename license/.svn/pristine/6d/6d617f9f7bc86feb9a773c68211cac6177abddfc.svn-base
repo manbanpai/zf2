@@ -1,0 +1,111 @@
+<br><br>
+<table style="float: right;">
+    <tr>
+        <td>
+            <form action="<?php echo $this->url('member', array('controller'=>'license'));?>" method="get" enctype="mutipart/form-data" id="search">
+                <div class="form-group col-md-4">
+                    <input type="text" name="company_name" id="company_name" class="form-control" value="公司名称">
+                </div>
+                <div class="form-group col-md-3">
+                    <select name="day" class="form-control" placeholder="Search">
+                        <option value=0 <?php if($this->day==0){?>selected<?php }?>>选择时段</option>
+                        <option value=7 <?php if($this->day==7){?>selected<?php }?>>7天内</option>
+                        <option value=15 <?php if($this->day==15){?>selected<?php }?>>15天内</option>
+                        <option value=30 <?php if($this->day==30){?>selected<?php }?>>30天内</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <select name="expire" class="form-control" placeholder="Search">
+                        <option value=0 <?php if($this->expire==0){?>selected<?php }?>>选择状态</option>
+                        <option value=1 <?php if($this->expire==1){?>selected<?php }?>>有效</option>
+                        <option value=-1 <?php if($this->expire==-1){?>selected<?php }?>>过期</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <button type="submit" id="search" class="btn btn-default">提交</button>
+                </div>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<table class="table table-hover">
+    <tr>
+        <th>序号</th>
+        <th>公司名称</th>
+        <th>客户端数量</th>
+        <th>软件有效天数</th>
+        <th>服务器主机/域名</th>
+        <th>创建时间</th>
+        <th>状态</th>
+        <th>操作</th>
+    </tr>
+    <?php 
+    if (count($this->paginator)):
+    foreach ($this->paginator as $item):    
+    ?>
+    <tr>
+        <td><?php echo $item->id;?></td>
+        <td><?php echo $this->escapehtml($item->company_name);?></td>
+        <td><?php echo $this->escapehtml($item->max_client_number);?></td>
+        <td><?php echo $this->escapehtml($item->soft_valid_days);?></td>        
+        <td><?php echo $this->escapehtml($item->server_domain);?></td>
+        <td><?php echo $this->escapehtml(date('Y/m/d H:i:s',$item->create_time));?></td>
+        <td>
+            <?php
+                if ($item->expire_time<=time()){
+            ?>
+            <span style="color:red;">过期</span>
+            <?php 
+                }else{
+            ?>
+            <span style="color:green;">有效</span>
+            <?php 
+                }
+            ?>
+        </td>
+        <td>
+            <a href="<?php echo $this->url('member', array('controller'=>'license', 'action'=>'acl_details', 'id'=>$item->id));?>" title="详细查看"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;
+            <?php 
+            if ($item->audit == '0'){
+                $url = "javascript:alert('审核未通过，不允许下载！');";
+            }else{
+                $url = $this->url('member', array('controller'=>'license', 'action'=>'licensedown', 'id'=>$item->id));
+            }
+            ?>
+            <a href="<?php echo $url;?>" title="License下载"><span class="glyphicon glyphicon-download"></span></a>&nbsp;&nbsp;
+            <a href="<?php echo $this->url('member', array('controller'=>'license', 'action'=> 'apply', 'id'=>$item->id));?>" title="License申请"><span class="glyphicon glyphicon-plus-sign"></span></a>&nbsp;&nbsp;
+            <a href="javascript:void(0);" onClick="del('<?php echo $item->id?>')" title="删除"><span class="glyphicon glyphicon-remove"></span></a>
+        </td>
+    </tr>
+    <?php 
+    endforeach;
+    endif;
+    ?>
+</table>
+<?php echo $this->paginationcontrol($this->paginator,'Sliding','pagination.phtml',array('company_name'=>$this->company_name,'day'=>$this->day,'expire'=>$this->expire));?>
+
+<script type="text/javascript">
+	function del(id){
+		if(confirm('确定要删除吗？将不可恢复！')){
+			window.location.href='<?php echo $this->url('member', array('controller'=>'license','action'=>'delete'));?>/'+id;
+		}	
+	}
+	$(function(){
+		$('#company_name').css('color','#ccc');
+		$('#company_name').mousedown(function(){
+			var v = $(this).val();
+			$(this).css('color','#000');
+			if(v=="公司名称"){
+				$(this).val('');
+			}
+		});
+	});
+	$('#search').submit(function(){
+		var v = $('#company_name').val();
+		if(v=='公司名称'){
+			$('#company_name').val('');
+		}
+		return true;
+	});
+</script>

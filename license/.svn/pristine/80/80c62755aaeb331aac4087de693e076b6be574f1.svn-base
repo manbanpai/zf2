@@ -1,0 +1,68 @@
+<?php
+namespace Member\Crypt;
+
+class PrivateFile
+{
+    /**
+     * 文件扩展名
+     * @var string
+     */
+    const FILE_EXT = '.pem';
+    
+    /**
+     * 私钥前缀
+     * @var string
+     */
+    const FILE_NAME_PREFIX = 'private_';
+    
+    /**
+     * 文件存储路径
+     * @var string
+     */
+    const FILE_PATH = 'data/ca/';
+    
+    /**
+     * 获取私钥
+     * @param string $filename
+     */
+    public function getPrivateKey($filename)
+    {
+        if (file_exists($filename))
+            return @file_get_contents($filename);
+    }
+    
+    /**
+     * 私钥文件路径
+     * @return string
+     */
+    public function getPrivateFilePath()
+    {
+        return self::FILE_PATH;
+    }
+    
+    /**
+     * 私钥文件名
+     * @param number $certId
+     * @return string
+     */
+    public function getPrivateFileName($certId)
+    {
+        return self::FILE_NAME_PREFIX.sha1($certId).self::FILE_EXT;
+    }
+    
+    /**
+     * 私钥加密
+     * @param string $filename  加密文件名
+     * @param string $in        要加密的内容
+     * @return boolean
+     */
+    public function cryptRSA($filename,$in)
+    {
+        if (!($privateKey = @file_get_contents($filename))){
+            return false;
+        }
+        $crypt = new CryptRSA();
+        $crypt->setPrivateKey($privateKey);
+        return $crypt->encrypt($in);
+    }
+}

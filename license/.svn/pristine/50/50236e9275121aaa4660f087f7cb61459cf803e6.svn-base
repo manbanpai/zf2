@@ -1,0 +1,194 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('member', array('controller'=>'license'))?>">返回</a>
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('lic')?>">测试license文件收集</a>
+</div>
+<br>
+<br>
+<?php 
+$form = $this->form;
+$form->setAttribute('action', $this->url('member', array('controller'=>'license','action'=>'add')));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formhidden($form->get('id'));
+?>
+<table class="table">
+    <tr>
+        <td><b>加密公钥序列号：</b></td>
+    </tr>
+    <tr>
+        <td>            
+			<div class="form-group">
+				<div class="row">
+					<div class="col-xs-10">
+						<?php echo $this->formrow($form->get('certficate_id'));?>
+						<?php echo $this->formrow($form->get('serial'));?>
+					</div>
+					<div class="col-xs-1">
+						<a type="button" class="btn btn-info" href="#" data-toggle="modal" data-target="#licensefile">导入</a>
+						<div class="modal fade" id="licensefile" tabindex="-1" role="dialog" aria-labelledby="licensefileLabel">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">License文件导入：</div>
+									<div class="modal-body">
+										<div class="row">
+											<div class="col-xs-3">加密证书：</div>
+											<div class="col-xs-3"><input type="file" name="lic_cert" id="lic_cert"></div>
+										</div>
+										<br>
+										<div class="row">
+											<div class="col-xs-3">license文件：</div>
+											<div class="col-xs-3"><input type="file" name="lic_file" id="lic_file"></div>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="close_modal btn btn-info" data-dismiss="modal" id="lic_file_btn">保存</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+				</div>                    
+			</div>            
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>可接入的最大客户端数量：</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('max_client_number'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>软件有效天数：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('soft_valid_days'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>客户详细信息：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('client_info'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器主机/域名：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_domain'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器CPU ID：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_cpu_id'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器IP：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_ip'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>服务器MAC：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('server_mac'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <?php 
+                echo $this->formSubmit($form->get('submit'));
+            ?>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+$(function(){
+	$('#lic_file_btn').click(function(){
+		ajaxFileUpload();
+	});
+});
+
+function ajaxFileUpload(){
+	$.ajaxFileUpload({
+		url:'<?php echo $this->url('member', array('controller'=>'license','action'=>'acl_importlicense'));?>',
+		secureuri: false,
+		fileElementId: ['lic_cert','lic_file'],
+		dataType: 'json',
+		success: function(data, status){
+			if(data.error != ''){
+				alert(data.msg);
+			}else{
+				//license文件详细信息
+				$('#max_client_number').val(data.info.max_client_number);
+				$('#soft_valid_days').val(data.info.soft_valid_days);
+				$('#client_info').val(data.info.client_info);
+				$('#server_domain').val(data.info.server_domain);
+				$('#server_cpu_id').val(data.info.server_cpu_id);
+				$('#server_ip').val(data.info.server_ip);
+				$('#server_mac').val(data.info.server_mac);
+
+				//加密的公钥序列号
+				$('#certficate_id').val(data.cert_id);
+				$('#serial').val(data.serial);
+				alert(data.msg);
+			}
+		},
+		error: function(data, status, e){
+			alert(e);
+		}
+	})
+	return false;
+}
+</script>

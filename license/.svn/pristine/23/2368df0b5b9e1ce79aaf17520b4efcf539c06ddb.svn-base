@@ -1,0 +1,19 @@
+{
+	"max_client_number":"100",		//可接入的最大客户端数量
+	"soft_valid_days":"30",			//软件有效天数
+	"client_info":					//客户详细信息
+	{
+		"company_name":"\u5e73\u6cbb\u4e1c\u65b9",		//公司名称
+		"tel":"62885050",								//电话
+		"fax":"62885051",								//传真
+		"contact":"\u7559\u8a00\u751f",					//联系人
+		"profession":"\u603b\u7ecf\u7406",				//职业
+		"mobile":"13812221215",							//手机
+		"email":"761846158@qq.com",						//email
+		"other":"ee"									//其他
+	},
+	"server_domain":"192.168.0.128:8008",				//服务器主机/域名
+	"server_cpu_id":"328e80fe69ca35d659f8296ccb86a12e",	//服务器CPU ID
+	"server_ip":"http:\/\/192.168.0.128:8008",			//服务器IP
+	"server_mac":"20:47:47:98:E6:61"					//服务器MAC
+}

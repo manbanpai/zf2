@@ -1,0 +1,25 @@
+<?php
+namespace Common\Crypt;
+
+class X509
+{
+    /**
+     * 读取证书
+     * @param string $certData
+     * @return void
+     */
+    public function x509Read($certData)
+    {
+        return openssl_x509_read($certData);
+    }
+    
+    /**
+     * 解析证书
+     * @param $cert resource
+     * @return array
+     */
+    public function x509Parse($cert)
+    {
+        return openssl_x509_parse($cert);
+    }
+}

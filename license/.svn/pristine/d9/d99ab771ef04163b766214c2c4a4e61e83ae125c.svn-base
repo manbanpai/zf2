@@ -1,0 +1,57 @@
+<?php
+namespace Member;
+
+return array(
+    'controllers' => array(
+        'invokables' => array(
+            'Member\Controller\MemberCompany' => 'Member\Controller\MemberCompanyController',
+            'Member\Controller\License' => 'Member\Controller\LicenseController',
+        ),
+    ),
+    'router' => array(
+        'routes' => array(
+            'member' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route' => '/member[/:controller[/:action[/:id]]][/:page]',
+                    'constraints' => array(
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id' => '[0-9]+',
+                        'page' => '[0-9]+',
+                    ),
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Member\Controller',
+                        'controller' => 'MemberCompany',
+                        'action'     => 'index',
+                        'page' => 1,
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'default' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/[:controller[/:action]]',
+                            'constraints' => array(
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            ),
+                            'defaults' => array(
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ),
+    'view_manager' => array(
+        'exception_template' => 'error/index',
+        'template_map' => array(
+            'error/index'             => __DIR__ . '/../view/error/index.phtml',
+        ),
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
+    ),
+);

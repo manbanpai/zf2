@@ -1,0 +1,21 @@
+<?php
+namespace Common\Crypt;
+
+abstract class AbstractKey
+{
+    
+    protected $pemString = null;
+    
+    protected $keyResource = null;
+    
+    protected $details = array();
+    
+    abstract public function encrypt($data);
+    
+    abstract public function decrypt($data);
+    
+    public function getKeyResource()
+    {
+        return $this->keyResource;
+    }
+}

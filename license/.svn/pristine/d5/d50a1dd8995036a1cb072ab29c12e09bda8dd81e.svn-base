@@ -1,0 +1,125 @@
+<?php
+namespace Base\Controller;
+
+use Base\Model\Config;
+
+use Base\Form\ConfigForm;
+
+use Zend\View\Model\ViewModel;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class ConfigController extends AbstractActionController
+{
+	protected $configTable;
+	
+	public function editAction()
+	{
+		$var = $this->params()->fromRoute('var','');
+		
+		if($var == ''){
+			return $this->redirect()->toRoute('base',array('controller'=>'config','action'=>'add'));
+		}
+		
+		try {
+			$config = $this->getConfigTable()->getConfig($var);
+		} catch (\Exception $ex) {
+			return $this->redirect()->toRoute('base',array('controller'=>'config','action'=>'add'));
+		}
+		
+		$form = new ConfigForm();
+		$form->bind($config);
+		
+		$request = $this->getRequest();
+		if($request->isPost()){
+			$form->setData($request->getPost());
+			if($form->isValid()){
+				$this->getConfigTable()->saveConfig($config);
+				return $this->redirect()->toRoute('base',array('controller'=>'config','action'=>'index'));
+			}
+		}
+		
+		$view = new ViewModel(array(
+				'form'=>$form,
+				'var'=>$var,	
+			));
+		return $view;
+	}
+	
+	public function addAction()
+	{
+		$form = new ConfigForm();
+		
+		$request = $this->getRequest();
+		if($request->isPost()){
+			$config = new Config();
+			$form->setData($request->getPost());
+			$form->setInputFilter($config->getInputFilter());
+			if($form->isValid()){
+				$config->exchangeArray($form->getData());
+				$this->getConfigTable()->saveConfig($config);
+				return $this->redirect()->toRoute('base',array('controller'=>'config'));
+			}
+		}
+		
+		$view = new ViewModel(array(
+			'form'=>$form,	
+			));
+		return $view;
+	}
+	
+	public function deleteAction()
+	{
+		$var = $this->params()->fromRoute('var','');
+		
+		echo $var;exit;
+		if($var == '')
+			return $this->redirect()->toRoute('base',array('controller'=>'config'));
+		
+		$request = $this->getRequest();
+		if($request->isGet()){
+			$this->getUserTable()->deleteUser($var);
+			$this->redirect()->toRoute('base',array('controller'=>'config'));
+		}
+	}
+	
+	public function indexAction()
+	{
+		$base = $this->getConfigTable()->fetchAll(array(
+				'paginated'=>true,
+				'where'=>array('scope'=>'base'),
+				));
+		$base->setCurrentPageNumber((int)$this->params()->fromQuery('page',1));
+		$base->setItemCountPerPage(10);
+		
+		$upload = $this->getConfigTable()->fetchAll(array(
+				'paginated'=>true,
+				'where'=>array('scope'=>'upload'),
+				));
+		$upload->setCurrentPageNumber((int)$this->params()->fromQuery('page',1));
+		$upload->setItemCountPerPage(10);
+		
+		$others = $this->getConfigTable()->fetchAll(array(
+				'paginated'=>true,
+				'where'=>array('scope'=>'others'),
+				));
+		$others->setCurrentPageNumber((int)$this->params()->fromQuery('page',1));
+		$others->setItemCountPerPage(10);
+		
+		$view = new ViewModel(array(
+			'base'=>$base,	
+			'upload'=>$upload,
+			'others'=>$others
+			));
+		return $view;
+	}
+	
+	public function getConfigTable()
+	{
+		if(!$this->configTable){
+			$sm = $this->getServiceLocator();
+			$this->configTable = $sm->get('Base\Model\ConfigTable');
+		}
+		return $this->configTable;
+	}
+}

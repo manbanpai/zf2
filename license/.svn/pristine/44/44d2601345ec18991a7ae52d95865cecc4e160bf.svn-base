@@ -1,0 +1,18 @@
+<?php
+namespace Common\Crypt\Aes;
+
+abstract class AbstractAes
+{
+    
+    /**
+     * 加密
+     * @param string $data
+     */
+    abstract public function encrypt($data);
+    
+    /**
+     * 解密
+     * @param string $data
+     */
+    abstract public function decrypt($data);
+}

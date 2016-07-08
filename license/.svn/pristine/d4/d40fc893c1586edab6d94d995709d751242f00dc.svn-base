@@ -1,0 +1,53 @@
+<?php
+namespace System;
+
+return array(
+    'controllers' => array(
+        'invokables' => array(
+            'Base\Controller\Config'=>'Base\Controller\ConfigController',
+        	'Base\Controller\Area'=>'Base\Controller\AreaController',
+        ),
+    ),	
+		
+    'router' => array(
+        'routes' => array(
+            'base' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/base[/:controller[/:action[/:id][/:vari]]]',
+                    'constraints' => array(
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id' => '[0-9]+',
+                    	
+                    ),
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Base\Controller',
+                        'controller' => 'Config',
+                        'action'     => 'index',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'default' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/[:controller[/:action]]',
+                            'constraints' => array(
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            ),
+                            'defaults' => array(
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ),
+    'view_manager' => array(
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
+    ),
+);

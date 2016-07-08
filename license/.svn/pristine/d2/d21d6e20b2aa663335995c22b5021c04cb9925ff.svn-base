@@ -1,0 +1,55 @@
+<?php
+namespace Common\Crypt\Rsa;
+
+class PrivateFile
+{
+    /**
+     * RSA加密块大小
+     * @var number
+     */
+    const RSA_BLOCK_SIZE = 245;
+    
+    /**
+     * RSA解密块大小
+     * @var string
+     */
+    const RSA_DE_BLOCK_SIZE = 344;
+    
+    /**
+     * 分段解密
+     * @param PrivateKey $privatekey
+     * @param string $data
+     * @return string
+     */
+    public function blockDecrypt(PrivateKey $privateKey, $data)
+    {
+        $block = self::RSA_DE_BLOCK_SIZE;
+        $str = '';
+        $line = ceil(strlen($data)/$block);
+        for ($i=0;$i<$line;$i++){
+            $s = substr($data, $i*$block, $block);
+            $str .= $privateKey->decrypt($s);
+        }
+        return $str;
+    }
+    
+    /**
+     * 分段加密
+     * @param PrivateKey $privatekey
+     * @param string $data
+     * @return string
+     */
+    public function blockEncrypt(PrivateKey $privateKey,$data)
+    {
+        $block = self::RSA_BLOCK_SIZE;
+        $len = strlen($data);
+        $line = ceil($len/$block);
+        $str = '';
+        for ($i=0;$i<$line;$i++){
+            $s = substr($data, $i*$block, $block);
+            $str .= $privateKey->encrypt($s);
+        }
+        return $str;
+    }
+    
+}

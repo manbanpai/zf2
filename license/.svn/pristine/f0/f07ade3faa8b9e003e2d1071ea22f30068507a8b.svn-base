@@ -1,0 +1,2 @@
+1、php 版本要求7.0.8 Release版本上测试通过
+2、加密和证书生成需要的模块：mcrypt 扩展，openssl 扩展

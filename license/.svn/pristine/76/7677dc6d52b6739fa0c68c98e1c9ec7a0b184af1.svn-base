@@ -1,0 +1,36 @@
+<?php
+$title = '修改配置项';
+$this->headTitle($title);
+?>
+<div class="btn-group" role="group" aria-label="...">
+	<a type="button" class="btn btn-info" href="<?php echo $this->url('base',array('controller'=>'config','action'=>'index'))?>">返回</a>
+	<a type="button" class="btn btn-info" href="<?php echo $this->url('base',array('controller'=>'config','action'=>'add'))?>">添加菜单</a>
+</div>
+<h1><?php echo $this->escapeHtml($title);?></h1>
+<?php 
+	$form->setAttribute('action',$this->url('base',array('controller'=>'config','action'=>'edit','vari'=>$vari)));
+	$form->prepare();
+	
+	echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+		<label>范围</label>
+		<?php echo $this->formRow($form->get('scope'));?>
+	</div>
+	<div class="form-group">
+		<label>变量名</label>
+		<?php echo $this->formRow($form->get('variable'))?>
+	</div>
+	<div class="form-group">
+		<label>值</label>
+		<?php echo $this->formRow($form->get('value'));?>
+	</div>
+	<div class="form-group">
+		<label>描述</label>
+		<?php echo $this->formRow($form->get('description'));?>
+	</div>
+	<div class="form-group">
+		<?php echo $this->formSubmit($form->get('submit'));?>
+	</div>
+
+	<?php echo $this->form()->closeTag();?>

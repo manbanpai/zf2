@@ -1,0 +1,156 @@
+	<link href="/js/zTree/css/zTreeStyle/zTreeStyle.css" media="screen" rel="stylesheet" type="text/css">
+	<link href="/js/zTree/css/metroStyle/metroStyle.css" media="screen" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="/js/zTree/js/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="/js/zTree/js/jquery.ztree.core-3.5.js"></script>
+	<script type="text/javascript" src="/js/zTree/js/jquery.ztree.excheck-3.5.js"></script>
+	<script type="text/javascript" src="/js/zTree/js/jquery.ztree.exedit-3.5.js"></script>
+	<SCRIPT type="text/javascript">
+	<!--
+	var zNodes =<?php print_r($data)?>;
+	
+	var setting = {	
+		data: {
+			simpleData: {
+				enable: true
+			}
+		},
+		async: {
+			enable: true,
+			url: getUrl,
+			autoParam: ["id"],
+		},
+		view: {
+			dblClickExpand: false,
+			showLine: true,
+			expandSpeed: "",
+			addHoverDom: addHoverDom,
+			removeHoverDom: removeHoverDom,
+		},
+		edit: {
+			enable: true
+		},
+		callback: {
+      		onRename: zTreeOnRename,
+      		onRemove: zTreeOnRemove,
+      		beforeRemove: zTreeBeforeRemove,
+          	onClick: onClick,
+      	},
+	};
+
+	function onClick(e,treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		zTree.expandNode(treeNode);
+	}
+	
+	var newCount = 1;
+	function addHoverDom(treeId, treeNode) {
+		var sObj = $("#" + treeNode.tId + "_span");
+		if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) return;
+		var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
+			+ "' title='add node' onfocus='this.blur();'></span>";
+		sObj.after(addStr);
+		var btn = $("#addBtn_"+treeNode.tId);
+		if (btn) btn.bind("click", function(){
+			 $.ajax({
+	     			type:"POST",
+	     			url:"<?php echo $this->url('base',array('controller'=>'area','action'=>'acl_getid'));?>",
+	     			success:function(msg1){
+	     				var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+	     				var newname = "new node" + (newCount++);
+	     				zTree.addNodes(treeNode, {id:msg1, pId:treeNode.id, name:newname});
+	     				
+	     				 $.ajax({
+	     		     			type:"POST",
+	     		     			url:"<?php echo $this->url('base',array('controller'=>'area','action'=>'add'));?>",
+	     		     			data:{pid:treeNode.id,title:newname},
+	     		     			success:function(msg){
+	     		         			if(msg)
+	     		     					alert('添加成功');
+	     		         			
+	     		         			zTree.refresh();
+	     		     			},
+	     		     			error:function(msg){
+	     		     				alert(msg.status);
+	     		     			}
+	     		              });
+	     			},
+	     			error:function(msg){
+	     				alert(msg.status);
+	     			}
+	              });
+			
+             return false;
+		});
+		
+	};
+	
+	function removeHoverDom(treeId, treeNode) {
+		$("#addBtn_"+treeNode.tId).unbind().remove();
+	};
+
+	//删除某个节点之前
+    function zTreeBeforeRemove(treeId, treeNode) {
+    	//获取选中的ID
+ 	 	var id = treeNode.id;
+       	if(id == 0){
+ 			alert('根节点不能删除!');
+ 			return false;
+         } 
+	 }
+	
+	//当删除某个节点时
+    function zTreeOnRemove(event, treeId, treeNode) {
+    	//获取选中的ID
+	 	var id = treeNode.id;
+		if(confirm('确认要删除吗？执行删除将删除该栏目下所有内容和子栏目内容！')){
+	      	$.ajax({
+				type:"POST",
+				url:"<?php echo $this->url('base',array('controller'=>'area','action'=>'delete'));?>",
+				data:{id:id},
+				success:function(msg){
+					if(msg)
+						alert('删除成功');
+				},
+				error:function(msg){
+					alert(msg.status);
+				}
+	         });
+		}else{
+			return false;
+		}
+	 }
+
+	//当重命名时触发的函数
+    function zTreeOnRename(event, treeId, treeNode, isCancel) {
+    	//获取选中的ID
+	    var id = treeNode.id;
+     	var name = treeNode.name;
+     	$.ajax({
+			type:"POST",
+			url:"<?php echo $this->url('base',array('controller'=>'area','action'=>'edit'));?>",
+			data:{id:id,title:name},
+			success:function(msg){
+				if(msg){
+					alert('修改成功');
+				}
+			},
+			error:function(msg){
+				alert(msg.status);
+			}
+        });
+     }
+
+	function getUrl(treeId, treeNode) {
+		return "<?php echo $this->url('base',array('controller'=>'area','action'=>'acl_area'))?>";
+	}
+	
+	$(document).ready(function(){
+		$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+	});
+			//-->
+	</SCRIPT>
+	<div class="alert alert-info alert-dismissible" role="alert">
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	  <strong>说明：</strong> 如需对地区进行操作，请将鼠标移动到地区节点上.
+	</div>
+	<ul id="treeDemo" class="ztree"></ul>

@@ -1,0 +1,250 @@
+<?php
+namespace System\Controller;
+
+use System\Model\Menu;
+
+use System\Form\MenuForm;
+
+use Application\Components\Controller;
+
+use Zend\View\Model\ViewModel;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class MenuController extends AbstractActionController
+{
+	protected $menuTable;
+	protected $menuPermiTable;
+	
+	//设置
+	public function setAction()
+	{
+		$request = $this->getRequest();
+		if($request->isPost()){
+			$permi = $request->getPost();
+			$id = (int) $request->getPost('id');
+			if($id){
+				$operation = explode(',',$request->getPost('str'));
+				$menuPermi = $this->getMenuPermiTable()->fetchAll(array('menu_id'=>$id));
+				$tmp = array();
+				if(!empty($menuPermi)){
+					foreach($menuPermi as $m){
+						if(!in_array($m->operation,$operation)){
+							$this->getMenuPermiTable()->deleteMenuPermi($m->id);
+						}else{
+							$tmp[] = $m->operation;
+						}
+					}
+					$operation = array_diff($operation,$tmp);
+				}
+
+				if(!empty($operation)){
+					$des = array(
+							'add'=>'添加',
+							'edit'=>'修改',
+							'delete'=>'删除',
+							'export'=>'导出',
+							'import'=>'导入',
+							'statistics'=>'统计',
+							'backup'=>'备份',
+							'set'=>'设置',
+							'download'=>'下载',
+					        'apply'=>'License申请',
+					        'audit'=>'审核',
+					        'licensedown'=>'License下载',
+					        'certdown'=>'证书下载',
+					        'editIssuer'=>'颁发者修改',
+					        'addIssuer'=>'颁发者添加',
+					);
+					foreach($operation as $o){
+						$s = explode('_', $o);
+						if(!empty($s)){
+							$k = $des[$s[1]];
+						}
+						$arr = array('menu_id'=>$id,'name'=>$k,'operation'=>strtolower($o));
+						$this->getMenuPermiTable()->insertMenuPermi($arr);
+					}
+				}
+				$this->redirect()->toRoute('system',array('controller'=>'menu'));
+			}
+		}
+		
+		$view = new ViewModel();
+		$view->setTerminal(true);
+		return $view;
+	}
+	
+	//删除
+	public function deleteAction()
+	{
+		$id = (int)$this->params()->fromRoute('id',0);
+		if(!$id){
+			$this->redirect()->toRoute('system',array(
+					'controller'=>'menu',
+					'action'=>'index',
+					));
+		}
+		
+		$request = $this->getRequest();
+		if($request->isGet()){
+			$this->getMenuTable()->deleteMenu($id);
+			$this->redirect()->toRoute('system',array(
+					'controller'=>'menu',
+					'action'=>'index',
+					));
+		}
+	}
+	
+	//录入
+	public function addAction()
+	{
+		$form = new MenuForm();
+		$form->get('submit')->setValue('Add');
+		$this->setMenuList($form);
+		
+		$request = $this->getRequest();
+		if($request->isPost()){
+			$menu = new Menu();
+			$form->setInputFilter($menu->getInputFilter());
+			$form->setData($request->getPost());
+		
+			if($form->isValid()){
+				$menu->exchangeArray($form->getData());
+				if($request->getPost('controller')){
+					$menu->url = $request->getPost('controller').'/index';
+					$menu->acl = $request->getPost('controller').'index';
+					
+				}
+				$this->getMenuTable()->saveMenu($menu);
+				return $this->redirect()->toRoute('system',array('controller'=>'menu'));
+			}
+		}
+		
+		$view = new ViewModel(array(
+				'form'=>$form,
+		));
+		
+		return $view;
+	}
+	
+	//编辑
+	public function editAction()
+	{
+		$id = (int) $this->params()->fromRoute('id',0);
+		
+		if(!$id){
+			return $this->redirect()->toRoute('system',array('controller'=>'menu'));
+		}
+		
+		try {
+			$menu = $this->getMenuTable()->getMenu($id);
+		} catch (\Exception $ex) {
+			return $this->redirect()->toRoute('system',array('controller'=>'menu'));
+		}
+		
+		$form = new MenuForm();
+		$form->bind($menu);
+		$form->get('submit')->setValue('Edit');
+		$data = $this->getMenuTable()->fetchAll();
+		$this->setMenuList($form);
+		
+		$request = $this->getRequest();
+		if($request->isPost()){
+			$form->setInputFilter($menu->getInputFilter());
+			$form->setData($request->getPost());
+			
+			if($form->isValid()){
+				
+			    if($request->getPost('controller')){
+					$menu->url = $request->getPost('controller').'/index';
+					$menu->acl = $request->getPost('controller').'_index';
+				}
+				
+				if($request->getPost('pid') == 0){
+				    $display = $request->getPost('display');
+				    if($display == 'N'){
+				        $child = $this->getMenuTable()->fetchAll(array(
+                            'where'=>array('pid'=>$id),				            
+				        ));
+				        foreach($child as $c){
+				            $c->display = 'N';
+				            $this->getMenuTable()->saveMenu($c);
+				        }
+				    }
+				    $this->getMenuTable()->saveMenu($menu);
+				}else{
+				    $parent = $this->getMenuTable()->fetchAll(array(
+				        'where'=>array('id'=>$request->getPost('pid')),
+				    ));
+				    $parent = iterator_to_array($parent);
+				    if($parent[0]->display == 'N'){
+				        echo "<script>";
+				        echo "alert('请先修改父栏目可见！');";
+				        echo "</script>";
+				        
+				    }else{
+				        $this->getMenuTable()->saveMenu($menu);
+				    }
+				}
+				
+				return $this->redirect()->toRoute('system',array('controller'=>'menu'));
+			}
+		}
+		
+		$view = new ViewModel(array(
+				'id'=>$id,
+				'form'=>$form,
+				));
+		
+		return $view;
+	}
+
+	//列表
+	public function indexAction()
+	{
+		$paginator = $this->getMenuTable()->fetchAll();
+		
+		//模态框
+		$per = $this->getMenuPermiTable()->fetchAll();
+		$permi = array();
+		foreach($per as $p){
+			$permi[] = $p->operation;
+		}
+		
+		$view = new ViewModel(array(
+				'paginator'=>$paginator,
+				'permi'=>$permi,
+				));
+		return $view;
+	}
+	
+	//设置表单中Select元素
+	public function setMenuList($form)
+	{
+		$data = $this->getMenuTable()->fetchAll(array('where'=>array('pid'=>0)));
+		$arr = array();
+		foreach($data as $d){
+			$arr[] = '请选择';
+			$arr[$d->id] = $d->name;
+		}
+	
+		$form->get('pid')->setValueOptions($arr);
+	}
+	
+	public function getMenuPermiTable()
+	{
+		if(!$this->menuPermiTable){
+			$sm = $this->getServiceLocator();
+			$this->menuPermiTable = $sm->get('System\Model\MenuPermiTable');
+		}
+		return $this->menuPermiTable;
+	}
+	
+	public function getMenuTable(){
+		if(!$this->menuTable){
+			$sm = $this->getServiceLocator();
+			$this->menuTable = $sm->get('System\Model\MenuTable');
+		}
+		return $this->menuTable;
+	}
+}

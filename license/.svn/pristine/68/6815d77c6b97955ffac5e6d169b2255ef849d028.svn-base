@@ -1,0 +1,239 @@
+<?php
+namespace Base\Controller;
+
+use Zend\Db\Sql\Sql;
+
+use Zend\Log\Logger;
+
+use Zend\Log\Writer\Db;
+
+use Zend\Db\Adapter\Adapter;
+
+use Zend\View\Model\ViewModel;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class AreaController extends AbstractActionController
+{
+	protected $areaTable;
+	
+	/**
+	* 函数用途描述
+	* 获取地区表最后记录ID
+	* 返回最后记录ID+1的值
+	* @date: 2016年6月30日
+	* @author: cuik
+	*/
+	public function aclGetidAction()
+	{
+		if ($this->getRequest()->isXmlHttpRequest()){
+			$d = $this->getLastId('lic_area','area_id desc',1);
+			echo $d+1;
+			return $this->response;
+		}
+	}
+	
+	//录入
+	public function addAction()
+	{
+		if ($this->getRequest()->isXmlHttpRequest()){
+			$request = $this->getRequest();
+			$pid = (int)$request->getPost('pid');
+			$title = $request->getPost('title');
+	
+			$data = array();
+			if ($title){
+				$flag = $this->insert('lic_area',array(
+						'title'=>$title,
+						'pid'=>$pid,
+						));
+				if($flag){
+					echo 1;
+				}
+			}
+		
+			return $this->response;
+		}
+	}
+	
+	//递归删除，当删除父级地区时，删除其所有子地区
+	public function repeatDelete($id)
+	{
+		$children = $this->select('lic_area',array('pid'=>$id));
+		$children = iterator_to_array($children);
+		if(!empty($children)){
+			foreach($children as $c){
+				$this->repeatDelete($c['area_id']);
+				$this->delete('lic_area',array('area_id'=>$c['area_id']));
+			}
+			
+		}
+		$this->delete('lic_area',array('area_id'=>$id));
+	}
+	
+	//删除
+	public function deleteAction()
+	{
+		if ($this->getRequest()->isXmlHttpRequest()){
+			$request = $this->getRequest();
+			$id = (int)$request->getPost('id');
+			if ($id){
+				$this->repeatDelete($id);
+				echo $id;
+			}
+		
+			return $this->response;
+		}
+	}
+	
+	//编辑
+	public function editAction()
+	{
+		if ($this->getRequest()->isXmlHttpRequest()){
+			$request = $this->getRequest();
+			$id = (int)$request->getPost('id');
+			$title = $request->getPost('title');
+			$data = array();
+			if ($id){
+				$flag = $this->update('lic_area', array('title'=>$title),array('area_id'=>$id));
+				if($flag){
+					echo 1;
+				}
+			}
+		
+			return $this->response;
+		}
+	}
+	
+	//当点击某一节点时触发的操作，返回其所有子节点
+	public function aclAreaAction()
+	{
+		if ($this->getRequest()->isXmlHttpRequest()){
+			$request = $this->getRequest();
+			$id = $request->getPost('id');
+				
+			$data = array();
+			if ($id){
+				$arr = $this->select('lic_area',array('pid'=>$id));
+				
+				foreach ($arr as $a){
+					$flag = $this->select('lic_area',array('pid'=>$a['area_id']));
+					if(!empty(iterator_to_array($flag))){
+						$data[] = array('id'=>$a['area_id'],'name'=>$a['title'],'pId'=>$a['pid'],'isParent'=>true);
+					}else{
+						$data[] = array('id'=>$a['area_id'],'name'=>$a['title'],'pId'=>$a['pid']);
+					}
+				}
+			}
+			
+			echo json_encode($data);
+			return $this->response;
+		}
+	}
+	
+	//列表
+	public function indexAction()
+	{
+		$arr = $this->select('lic_area',array('pid'=>0));
+		
+		$data = array();
+		$data[] = array('id'=>0,'pId'=>-1,'name'=>'全国地区');
+		foreach ($arr as $a){
+			$data[] = array(
+				'id'=>$a['area_id'],
+				'name'=>$a['title'],
+				'pId'=>$a['pid'],
+				'isParent'=>true,
+				);
+		}
+		
+		$view = new ViewModel(array(
+			'data'=>json_encode($data)	
+			));
+		return $view;
+	}
+	
+	//数据库操作，删除
+	public function delete($table,array $where=null)
+	{
+		if($table){
+			$sql = new Sql($this->getAdapter());
+			$delete = $sql->delete($table);
+			if($where!=null && !empty($where)){
+				$delete->where($where);
+			}
+			$statement = $sql->prepareStatementForSqlObject($delete);
+			$id = $statement->execute();
+			return $id;
+		}
+	}
+	
+	//数据库操作，更新
+	public function update($table,array $values,array $where=null)
+	{
+		if($table && !empty($values)){
+			$sql = new Sql($this->getAdapter());
+			$update = $sql->update($table);
+			$update->set($values);
+			if($where!=null && !empty($where)){
+				$update->where($where);
+			}
+			$statement = $sql->prepareStatementForSqlObject($update);
+			$id = $statement->execute();
+			return $id;
+		}
+	}
+	
+	//数据库操作，添加
+	public function insert($table,array $values)
+	{
+		if($table && !empty($values)){
+			$sql = new Sql($this->getAdapter());
+			$insert = $sql->insert($table);
+			$insert->values($values);
+			$statement = $sql->prepareStatementForSqlObject($insert);
+			$id = $statement->execute();
+			return $id;
+		}
+	}
+	
+	//数据库操作，查询
+	public function select($table,$where=null)
+	{
+		if($table && $where){
+			$sql = new Sql($this->getAdapter());
+			$select = $sql->select();
+			$select->from($table);
+			if($where != null)
+				$select->where($where);
+			$statement = $sql->prepareStatementForSqlObject($select);
+			$results = $statement->execute();
+			return $results;
+		}
+	}
+	
+	//数据库操作，获取最后ID
+	public function getLastId($table,$order=null,$limit=null)
+	{
+		if($table){
+			$sql = new Sql($this->getAdapter());
+			$select = $sql->select();
+			$select->from($table);
+			if($order != null)
+				$select->order($order);
+			if($limit != null)
+				$select->limit($limit);
+			$statement = $sql->prepareStatementForSqlObject($select);
+			$results = $statement->execute();
+			$row = $results->current();
+			return $row['area_id'];
+		}
+	}
+	
+	public function getAdapter()
+	{
+		$sm = $this->getServiceLocator();
+		return $sm->get('Zend\Db\Adapter\Adapter');
+	}
+	
+}

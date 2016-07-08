@@ -1,0 +1,233 @@
+<?php
+namespace Member\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+use Member\Form\LicenseForm;
+use Member\Model\License;
+use Member\Crypt\PrivateFile;
+use Common\Crypt\X509;
+use Common\Crypt\PrivateKey;
+use Common\Crypt\Aes;
+use Common\License\License as lic;
+
+class LicenseController extends AbstractActionController
+{
+    protected $licenseTable;
+    protected $certficateTable;
+    
+    public function getLicenseTable()
+    {
+        if (!$this->licenseTable){
+            $sm = $this->getServiceLocator();
+            $this->licenseTable = $sm->get('Member\Model\LicenseTable');
+        }     
+        return $this->licenseTable;
+    }
+    
+    public function getCertficateTable()
+    {
+        if (!$this->certficateTable){
+            $sm = $this->getServiceLocator();
+            $this->certficateTable = $sm->get('Member\Model\CertficateTable');
+        }
+        return $this->certficateTable;
+    }
+    
+    public function indexAction()
+    {
+        $page = (int)$this->params()->fromRoute('page', 1);
+        $paginator = $this->getLicenseTable()->getPaginator($page, 10);
+        $view = new ViewModel();
+        $view->setVariable('paginator', $paginator);
+        return $view;
+    }
+    
+    /**
+     * 添加
+     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     */
+    public function addAction()
+    {
+        $form = new LicenseForm();
+        $certficate = $this->getCertficateTable();
+        //$arr = $certficate->fetchAll();
+        //$arr = $certficate->getSelect($arr);
+        //$form->elementCertficate($arr);
+        $request = $this->getRequest();
+        if ($request->isPost()){
+            $license = new License();
+            $form->setInputFilter($license->getInputFilter());
+            $postData = $request->getPost();            
+            $postData['serialnumber'] = time();
+            $form->setData($postData);
+            if ($form->isValid()){
+                $license->exchangeArray($form->getData());
+                $license->create_time = time();
+                $license->serialnumber = time();
+                $this->getLicenseTable()->saveLicense($license);
+                return $this->redirect()->toRoute('member', array(
+                    'controller' => 'license',
+                ));
+            }
+        }
+        $view = new ViewModel();
+        $view->setVariable('form', $form);
+        return $view;
+    }
+    
+    public function editAction()
+    {
+        
+    }
+    
+    /**
+     * license详细
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function aclDetailsAction()
+    {
+        $id = (int)$this->params()->fromRoute('id', 0);
+        $license = $this->getLicenseTable()->getLicense($id);
+        $view = new ViewModel();
+        $view->setVariable('license', $license);
+        return $view;
+    }
+    
+    /**
+     * 导入license未加密原文文件
+     * @return \Zend\Stdlib\ResponseInterface
+     */
+    public function aclImportLicenseAction()
+    {
+        $status = false;
+        $arr = array();
+        $request = $this->getRequest();
+        //license文件
+        $licfile = $request->getFiles('lic_file');
+        //证书序列号
+        $cert = $request->getFiles('lic_cert');
+        
+        if ($licfile['error']!=0 || $cert['error']!=0){
+            $arr['error'] = 'error';
+            $arr['msg'] = '上传失败！';
+        }else{
+            $certData = file_get_contents($cert['tmp_name']);
+            $x509 = new X509();
+            $ca = $x509->x509Read($certData);
+            $ca = $x509->x509Parse($ca);
+            $serialNumber = $ca['serialNumber'];
+            $serial = '0x'.dechex($serialNumber);
+            $serialData = $this->getCertficateTable()->getCertId($serial);
+            if (!empty($serialData)){
+                $serialNumber = $serialData->id;
+            }else{
+                $serialNumber = 0;
+            }
+            
+            $licfileContent = @file_get_contents($licfile['tmp_name']);
+            $licfileContent = lic::getReplaceFormatLicense($licfileContent);
+            $privFile = new PrivateFile();
+            $privFile->setFileName(hexdec($serial));
+            $pemString = $privFile->getPemString();
+            $en_text =  $licfileContent;
+            $privatekey = new PrivateKey($pemString);
+            $decrypted = $privatekey->decrypt($en_text);
+            $decrypted = json_decode($decrypted);
+            $arr['info'] = $decrypted;
+            $arr['cert_id'] = $serialNumber;//hidden int
+            $arr['serial'] = $serial;//dex
+            $arr['msg'] = '上传成功！';
+            $arr['error'] = '';
+        }
+        echo json_encode($arr);
+        return $this->response;           
+    }
+    
+    /**
+     * license文件下载
+     */
+    public function aclDownLicenseAction()
+    {      
+        $id = (int)$this->params()->fromRoute('id', 0);
+        $data = $this->getLicenseTable()->getLicense($id);
+        $licFile = new lic();
+        $licFilePath = $licFile->getFilePath();
+        $licFileName = $licFile->getFileName(hexdec($data->serial));
+        
+        //aes加密文件
+        $aes = new Aes();
+        //aes加密key
+        $aes->setKey($licFile->getLicenseKey());
+        
+        $licFile->setMaxClientNumber($data->max_client_number);
+        $licFile->setSoftValideDays($data->soft_valid_days);
+        $licFile->setClientInfo($data->client_info);
+        $licFile->setServerDomain($data->server_domain);
+        $licFile->setServerCpuId($data->server_cpu_id);
+        $licFile->setServerIp($data->server_ip);
+        $licFile->setServerMac($data->server_mac);
+        
+        //aes加密文件
+        $license = $licFile->getLicense();
+        $jsonLicense = json_encode($licFile->getLicense());
+        $aesLicense = $aes->encrypt($jsonLicense);
+        
+        if (!file_exists($licFilePath)){
+            if (!mkdir($licFilePath, 0777, true)){
+                throw new \Exception('创建文件夹失败！');
+            }
+        }
+        
+        //rsa加密
+        $privFile = new PrivateFile();
+        $privFile->setFileName(hexdec($data->serial));
+        $privatePemString = $privFile->getPemString();
+                
+        $privateKey = new PrivateKey($privatePemString);
+        $rsaLicense = $privateKey->encrypt($aesLicense);
+        
+        $license = new lic();
+        $licensefile = $license->getFormatLicense($rsaLicense);
+        
+        if (strlen($licensefile)==0){
+            throw new \Exception('私钥加密失败！');
+        }
+        
+        if (!file_put_contents($licFilePath.$licFileName, $licensefile)){
+            throw new \Exception('写入文件失败！');
+        }
+        if (file_exists($licFilePath.$licFileName)){
+            $this->down($licFilePath,$licFileName);
+        }        
+        return $this->response;
+    }
+    
+    /**
+     * 下载
+     * @param string $filepath
+     */
+    public function down($filepath,$filename)
+    {
+        ob_start();        
+        header( "Content-type:  application/octet-stream ");
+        header( "Accept-Ranges:  bytes ");
+        header( "Content-Disposition:  attachment;  filename = $filename");
+        $size=readfile($filepath.$filename);
+        header( "Accept-Length: " .$size);
+    }
+    
+    /**
+     * 删除
+     */
+    public function deleteAction()
+    {
+        $id = (int) $this->params()->fromRoute('id', 0);
+        if ($this->getLicenseTable()->deleteLicense($id)){
+            return $this->redirect()->toRoute('member', array(
+                'controller' => 'license',
+            ));
+        }
+    }
+}
+

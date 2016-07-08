@@ -1,0 +1,124 @@
+<?php
+$title = '修改角色';
+$this->headTitle($title);
+?>
+<div class="btn-group" role="group" aria-label="...">
+	<a type="button" class="btn btn-info" href="<?php echo $this->url('system',array('controller'=>'userrole','action'=>'index'))?>">返回</a>
+	<a type="button" class="btn btn-info" href="<?php echo $this->url('system',array('controller'=>'userrole','action'=>'add'))?>">添加角色</a>
+</div>
+<br/><br/>
+<h1><?php echo $this->escapeHtml($title);?></h1>
+<?php 
+	$form->setAttribute('action',$this->url('system',array('controller'=>'userrole','action'=>'edit','id'=>$id)));
+	$form->prepare();
+	
+	echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+		<?php echo $this->formHidden($form->get('id'));?>
+	</div>
+	<div class="form-group">
+		<label>角色名</label>
+		<?php echo $this->formRow($form->get('role_name'));?>
+	</div>
+	<?php
+	$meun = array();
+	$nav = array();
+	foreach($value as $v){
+		if($v->pid == 0){
+			$menu[] = $v;
+		}else{
+			$nav[] = $v;
+		}
+	}
+	?>
+	<div class="form-group">
+		<ul class="list-unstyled">
+			<?php foreach($menu as $k=>$m):?>
+			  <li>
+				<input type="checkbox" name='acl[]' id="tall<?php echo $k+1;?>" <?php if(in_array($m->acl,$acl)){echo 'checked';}?> value="<?php echo $m->acl?>">
+				<label><?php echo $m->name;?></label>
+			  		<?php $ke=0; foreach($nav as $n):?>
+			  		<?php if($n->pid == $m->id):?>
+			  		<ul style="list-style:none">
+			  		<li>
+						<input style="float:left" type="checkbox" name='acl[]' id="tall<?php echo $k+1;?>-<?php echo $ke+1?>" <?php if(in_array($n->acl,$acl)){echo 'checked';}?> value="<?php echo $n->acl?>"5>
+						<label style="float:left" for="tall<?php echo $k+1;?>-<?php echo $ke+1?>"><?php echo $n->name;?></label>
+						<ul style="float:left;list-style:none">
+			  				<?php $key=0; foreach($permi as $p):?>
+			  				<?php if($p->menu_id==$n->id):?>
+							<li style="float:left">
+							<input type="checkbox" name='acl[]' id="tall<?php echo $k+1;?>-<?php echo $ke+1?>-<?php echo $key+1;?>" <?php if(in_array($p->operation,$acl)){echo 'checked';}?> value="<?php echo $p->operation?>">
+							<label for="tall<?php echo $k+1;?>-<?php echo $ke+1?>-<?php echo $key+1;?>"><?php echo $p->name;?></label>&nbsp;&nbsp;
+							</li>
+							<?php $key++; endif;?>
+							<?php endforeach;?>
+						</ul>
+						<div class="clearfix"></div>
+			  		</li>
+			  		</ul>
+			  		<?php $ke++; endif;?>
+			  		<?php endforeach;?>
+			  </li>
+			<?php endforeach;?>
+		</ul>
+	</div>
+	<div class="form-group">
+		<label>状态</label><br>
+		<?php echo $this->formRow($form->get('status'))?>
+	</div>
+	<div class="form-group">
+		<?php echo $this->formSubmit($form->get('submit'));?>
+	</div>
+
+	<?php echo $this->form()->closeTag();?>
+	
+	<script>
+    // Apparently click is better chan change? Cuz IE?
+    $('input[type="checkbox"]').change(function(e) {
+
+      var checked = $(this).prop("checked"),
+          container = $(this).parent(),
+          siblings = container.siblings();
+
+      container.find('input[type="checkbox"]').prop({
+        indeterminate: false,
+        checked: checked
+      });
+
+      function checkSiblings(el) {
+
+        var parent = el.parent().parent(),
+            all = true;
+
+        el.siblings().each(function() {
+          return all = ($(this).children('input[type="checkbox"]').prop("checked") === checked);
+        });
+
+        if (all && checked) {
+
+          parent.children('input[type="checkbox"]').prop({
+            indeterminate: false,
+            checked: checked
+          });
+
+          checkSiblings(parent);
+
+        } else if (all && !checked) {
+
+          checkSiblings(parent);
+
+        } else {
+
+          el.parents("li").children('input[type="checkbox"]').prop({
+            indeterminate: false,
+            checked: true
+          });
+
+        }
+
+      }
+
+      checkSiblings(container);
+    });
+  </script>

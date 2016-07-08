@@ -1,0 +1,82 @@
+<?php
+namespace Member\Crypt;
+
+class CryptRSA 
+{
+    /**
+     * 私钥
+     * @var string
+     */
+    private $privateKey;
+    
+    /**
+     * 公钥
+     * @var string
+     */
+    private $publicKey;
+    
+    /**
+     * 设置私钥
+     * @param string $privateKey
+     */
+    public function setPrivateKey($privateKey)
+    {
+        $this->privateKey = $privateKey;
+    }
+    
+    /**
+     * 获取私钥
+     * @return string
+     */
+    public function getPrivateKey()
+    {
+        return $this->privateKey;
+    }
+    
+    /**
+     * 设置公钥
+     * @param string $publicKey
+     */
+    public function setPublicKey($publicKey)
+    {
+        $this->publicKey = $publicKey;
+    }
+    
+    /**
+     * 获取公钥
+     * @return string
+     */
+    public function getPublicKey()
+    {
+        return $this->publicKey;
+    }
+    
+    /**
+     * 私钥加密
+     * @param string $in
+     * @return string
+     */
+    public function encrypt($in)
+    {
+        if (!is_string($in)){
+            return null;
+        }
+        if (openssl_private_encrypt($in, $encrypted, $this->getPrivateKey())){
+            return base64_encode($encrypted);
+        }
+    }
+    
+    /**
+     * 私钥解密
+     * @param string $in
+     * @return string
+     */
+    public function decrypt($in)
+    {
+        $str = base64_encode(pack("H*", $in));
+        if (openssl_private_decrypt(base64_decode($str), $out, $this->getPrivateKey(), OPENSSL_NO_PADDING)){
+            return trim(strrev($out));
+        }
+    }
+    
+}

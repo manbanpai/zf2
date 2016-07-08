@@ -1,0 +1,153 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('member', array('controller'=>'company'));?>">返回</a>
+</div>
+<br><br>
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('member',array('controller'=>'company','action'=>'edit','id'=>$this->id)));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formhidden($form->get('id'));
+?>
+<table class="table">
+    <tr>
+        <td><b>公司名称：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php 
+                    echo $this->formRow($form->get('company_name'));
+                ?>
+                <span style="color:red">*</span>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>电话：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('tel'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>传真：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('fax'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>联系人：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('contacts'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>职业：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('vocation'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>手机：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('mobile'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Email：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('email'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>地区：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <span id="_province">
+                    <?php 
+                    if ($form->has('province')){
+                        echo $this->formrow($form->get('province'));
+                    }
+                    ?>
+                </span>
+                <span id="_city">
+                    <?php 
+                    if ($form->has('city')){
+                        echo $this->formrow($form->get('city'));
+                    }
+                    ?>
+                </span>
+                <span id="_area">
+                    <?php 
+                    if ($form->has('area')){
+                        echo $this->formrow($form->get('area'));
+                    }
+                    ?>
+                </span>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>地址：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('address'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>网址：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('url'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>公司介绍：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('introduce'));?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <?php 
+                echo $this->formSubmit($form->get('submit'));
+            ?>
+        </td>
+    </tr>
+</table>

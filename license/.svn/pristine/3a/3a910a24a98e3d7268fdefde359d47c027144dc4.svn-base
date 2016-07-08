@@ -1,0 +1,39 @@
+<?php if ($this->pageCount): ?>
+<div>
+    <ul class="pagination">
+        <li>
+        <?php if (isset($this->previous)): ?>
+            <a href="<?php echo $this->url('member', array('controller'=>'license', 'page' => $this->previous)); ?>"><<</a>
+        <?php else: ?>
+            <span class="disabled">
+                <a href="javascript:void(0);"><<</a>
+            </span>
+        <?php endif; ?>
+        </li>
+
+        <?php foreach ($this->pagesInRange as $page): ?>
+            <?php if ($page != $this->current): ?>
+                <li>
+                    <a href="<?php echo $this->url('member', array('controller'=>'license', 'page' => $page)); ?>"><?php echo $page; ?></a>
+                </li>
+            <?php else: ?>
+                <li class="active">
+                    <a href="javascript:void(0);"><?php echo $page; ?></a>
+                </li>
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+    <?php if (isset($this->next)): ?>
+        <li>
+            <a href="<?php echo $this->url('member', array('controller'=>'license','page' => $this->next)); ?>">>></a>
+        </li>
+    <?php else: ?>
+        <li>
+            <span class="disabled">
+                <a href="javascript:void(0);">>></a>
+            </span>
+        </li>
+    <?php endif; ?>
+    </ul>
+</div>
+<?php endif; ?>

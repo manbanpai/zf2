@@ -1,0 +1,43 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('member', array('controller'=>'license','action'=>'add'))?>">增加</a>
+</div>
+<br>
+<br>
+<table class="table table-hover">
+    <tr>
+        <th width="100">可接入的最大客户端数量</th>
+        <th>软件有效天数</th>
+        <th>客户详细信息</th>
+        <th>服务器主机/域名</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    <?php 
+    if (count($this->paginator)):
+    foreach ($this->paginator as $item):    
+    ?>
+    <tr>
+        <td><?php echo $this->escapehtml($item->max_client_number);?></td>
+        <td><?php echo $this->escapehtml($item->soft_valid_days);?></td>
+        <td><?php echo $this->escapehtml($item->client_info);?></td>
+        <td><?php echo $this->escapehtml($item->server_domain);?></td>
+        <td><?php echo $this->escapehtml(date('Y-m-d H:i:s',$item->create_time));?></td>
+        <td><a href="<?php echo $this->url('member', array('controller'=>'license', 'action'=>'details', 'id'=>$item->id));?>">详细</a>
+        <a href="<?php echo $this->url('member', array('controller'=>'license', 'action'=>'downlicense', 'id'=>$item->id));?>">下载</a>
+            <a href="javascript:void(0);" onClick="del('<?php echo $item->id?>')">删除</a>
+        </td>
+    </tr>
+    <?php 
+    endforeach;
+    endif;
+    ?>
+</table>
+<?php echo $this->paginationcontrol($this->paginator,'Sliding','pagination.phtml');?>
+
+<script type="text/javascript">
+	function del(id){
+		if(confirm('确定要删除吗？将不可恢复！')){
+			window.location.href='<?php echo $this->url('member', array('controller'=>'license','action'=>'delete'));?>/'+id;
+		}	
+	}
+</script>

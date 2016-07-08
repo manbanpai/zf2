@@ -1,0 +1,30 @@
+<?php
+namespace Common\Helper;
+
+class Helper
+{
+    /**
+    * 获取一个随机字符串
+    * @date: 2016年6月16日
+    * @author: cuik
+    * @param: int
+    * @return: string
+    */
+    public function getRange($int)
+    {
+        $int = (int)$int;
+        if($int){
+            $lower = range('a', 'z');
+            $upper = range('A', 'Z');
+            $number = range(0,9);
+            $range = array_merge($lower,$upper,$number);
+            $count = count($range);
+            $rand = "";
+            for($i=0;$i<$int;$i++){
+                $n = rand(0, $count);
+                $rand .= $range[$n];
+            }
+            return $rand;
+        }
+    }
+}

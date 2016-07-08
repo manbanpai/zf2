@@ -1,0 +1,64 @@
+<?php
+namespace Member\Crypt;
+
+class Aes
+{
+    
+    /**
+     * CBC模式创建随机的初始向量
+     */
+    const _IV = '@www.porient.com';
+    /**
+     * 算法
+     */
+    const _CIPHER = MCRYPT_RIJNDAEL_128;
+    /**
+     * 模式
+     */
+    const _MODE = MCRYPT_MODE_CBC;
+    /**
+     * 秘钥
+     */
+    public $key = '012345678901http://mail.pzdf.com';
+    
+    /**
+     * 设置key
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+        if (!empty($key)){
+            $this->key = $key;
+        }else{
+            $this->key = substr($this->key,0,16);
+        }
+    }
+    
+    /**
+     * 获取key
+     * @return Ambigous <string, string>
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+    
+    /**
+     * 加密
+     * @param string $str  要加密的字符串
+     * @return string
+     */
+    public function encrypt($str){
+        return mcrypt_encrypt(self::_CIPHER, $this->getKey(), $str, self::_MODE, self::_IV);
+    }
+    
+    /**
+     * 解密
+     * @param string $str  要解密的字符串
+     * @return string
+     */
+    public function decrypt($str){
+        return mcrypt_decrypt(self::_CIPHER, $this->getKey(), $str, self::_MODE, self::_IV);
+    }
+    
+}

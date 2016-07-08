@@ -1,0 +1,248 @@
+<?php
+/**
+ * license文件json格式
+   {
+     "max_client_number":"",    //encrypt
+     "soft_valid_days":"",      //encrypt
+     "client_info":{"company_name":"","tel":"","fax":"","contact":"","profession":"","mobile":"","email":"","other":""},          //内容格式：公司名称,电话,传真,联系人,职业,手机,Email,其他
+     "server_domain":"",        //
+     "server_cpu_id":"",        //encrypt
+     "server_ip":"",            //
+     "server_mac":""            //encrypt
+   }
+ */
+namespace Member\Crypt;
+
+class LicenseFile
+{
+    /**
+     * license文件扩展名
+     * @var string
+     */
+    const FILE_EXT = '.lic';
+    
+    /**
+     * 文件名前缀
+     * @var string
+     */
+    const FILE_NAME_PREFIX = 'license_';
+    
+    /**
+     * license存储目录
+     * @var string
+     */
+    const FILE_PATH = 'data/license/';
+    
+    /**
+     * 可接入的最大客户端数量
+     * @var string
+     */
+    private $maxClientNumber;
+    /**
+     * 软件有效天数
+     * @var string
+     */
+    private $softValideDays;
+    /**
+     * 客户详细信息
+     * @var string
+     */
+    private $clientInfo;
+    /**
+     * 服务器主机/域名
+     * @var string
+     */
+    private $serverDomain;
+    /**
+     * 服务器CPU ID
+     * @var string
+     */
+    private $serverCpuId;
+    /**
+     * 服务器IP
+     * @var string
+     */
+    private $serverIp;
+    /**
+     * 服务器MAC
+     * @var string
+     */
+    private $serverMac;
+    
+    /**
+     * 设置可接入的最大客户端数量
+     * @param string $maxClientNumber
+     */
+    public function setMaxClientNumber($maxClientNumber)
+    {
+        $this->maxClientNumber = $maxClientNumber;
+    }
+    
+    /**
+     * 获取可接入的最大客户端数量
+     * @return string
+     */
+    public function getMaxClientNumber()
+    {
+        return $this->maxClientNumber;
+    }
+    
+    /**
+     * 设置软件有效天数
+     * @param string $softValideDays
+     */
+    public function setSoftValideDays($softValideDays)
+    {
+        $this->softValideDays = $softValideDays;
+    }
+    
+    /**
+     * 获取软件有效天数
+     * @return string
+     */
+    public function getSoftValideDays()
+    {
+        return $this->softValideDays;
+    }
+    
+    /**
+     * 设置客户详细信息
+     * @param string $clientInfo
+     */
+    public function setClientInfo($clientInfo)
+    {
+        $this->clientInfo = $clientInfo;
+    }
+    
+    /**
+     * 获取客户详细信息
+     * @return string
+     */
+    public function getClientInfo()
+    {
+        return $this->clientInfo;
+    }
+    
+    /**
+     * 设置服务器主机/域名
+     * @param string $serverDomain
+     */
+    public function setServerDomain($serverDomain)
+    {
+        $this->serverDomain = $serverDomain;
+    }
+    
+    /**
+     * 获取服务器主机/域名
+     * @return string
+     */
+    public function getServerDomain()
+    {
+        return $this->serverDomain;
+    }
+    
+    /**
+     * 设置服务器CPU ID
+     * @param string $serverCpuId
+     */
+    public function setServerCpuId($serverCpuId)
+    {
+        $this->serverCpuId = $serverCpuId;
+    }
+    
+    /**
+     * 获取服务器CPU ID
+     * @return string
+     */
+    public function getServerCpuId()
+    {
+        return $this->serverCpuId;
+    }
+    
+    /**
+     * 设置服务器IP
+     * @param string $serverIp
+     */
+    public function setServerIp($serverIp)
+    {
+        $this->serverIp = $serverIp;
+    }
+    
+    /**
+     * 获取服务器IP
+     * @return string
+     */
+    public function getServerIp()
+    {
+        return $this->serverIp;
+    }
+    
+    /**
+     * 设置服务器MAC
+     * @param string $serverMac
+     */
+    public function setServerMac($serverMac)
+    {
+        $this->serverMac = $serverMac;
+    }
+    
+    /**
+     * 获取服务器MAC
+     * @return string
+     */
+    public function getServerMac()
+    {
+        return $this->serverMac;
+    }
+    
+    /**
+     * 获取license文件
+     * @return string
+     */
+    public function getLicense()
+    {
+        return json_encode(array(
+            'max_client_number'=>$this->getMaxClientNumber(),
+            'soft_valid_days'=>$this->getSoftValideDays(),
+            'client_info'=>$this->getClientInfo(),
+            'server_domain'=>$this->getServerDomain(),
+            'server_cpu_id'=>$this->getServerCpuId(),
+            'server_ip'=>$this->getServerIp(),
+            'server_mac'=>$this->getServerMac()
+        ));
+    }
+    
+    /**
+     * 获取license文件加密key
+     * 加密规则：
+     * （客户详细信息+获取服务器主机/域名+获取服务器IP）连接后的md5值
+     * @return string
+     */
+    public function getLicenseKey()
+    {
+        $str  = '';
+        $str .= $this->getClientInfo();
+        $str .= $this->getServerDomain();
+        $str .= $this->getServerIp();
+        return md5($str);
+    }
+    
+    /**
+     * 获取文件存储路径
+     * @return string
+     */
+    public function getFilePath()
+    {
+        return self::FILE_PATH;
+    }
+    
+    /**
+     * 文件名
+     * @param number $id
+     * @return string
+     */
+    public function getFileName($id)
+    {
+        return self::FILE_NAME_PREFIX.sha1($id).self::FILE_EXT;
+    }
+}

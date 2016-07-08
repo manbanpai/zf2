@@ -1,0 +1,443 @@
+<?php
+/**
+ * license文件json格式
+   {
+     "max_client_number":"",    //encrypt
+     "soft_valid_days":"",      //encrypt
+     "client_info":{"company_name":"","tel":"","fax":"","contact":"","profession":"","mobile":"","email":"","other":""},          //
+     "server_domain":"",        //
+     "server_cpu_id":"",        //encrypt   //key
+     "server_ip":"",            //          //key
+     "server_mac":""            //encrypt   //key
+   }
+ */
+namespace Common\License;
+
+class License
+{
+    const LIC_START = '-----BEGIN LICENSE-----';
+    
+    const LIC_END = '-----END LICENSE-----';
+    
+    const FILE_PATH = 'data/license/';
+    
+    const FILE_NAME_PREFIX = 'license_';
+    
+    const FILE_EXT = '.lic';
+    
+    const LICENSE_LINE_LENGTH = 64;
+    
+    /**
+     * 可接入的最大客户端数量
+     * @var string
+     */
+    private $maxClientNumber;
+    /**
+     * 软件有效天数
+     * @var string
+     */
+    private $softValideDays;
+    /**
+     * 客户详细信息
+     * @var string
+     */
+    private $clientInfo;
+    private $companyName=null;  //公司名称
+    private $tel=null;          //电话
+    private $fax=null;          //传真
+    private $contact=null;      //联系人
+    private $profession=null;   //职业
+    private $mobile=null;       //手机
+    private $email=null;        //email
+    private $other=null;        //其他
+    /**
+     * 服务器主机/域名
+     * @var string
+     */
+    private $serverDomain;
+    /**
+     * 服务器CPU ID
+     * @var string
+     */
+    private $serverCpuId;
+    /**
+     * 服务器IP
+     * @var string
+     */
+    private $serverIp;
+    /**
+     * 服务器MAC
+     * @var string
+     */
+    private $serverMac;
+    
+    /**
+     * 设置可接入的最大客户端数量
+     * @param string $maxClientNumber
+     */
+    public function setMaxClientNumber($maxClientNumber)
+    {
+        $this->maxClientNumber = $maxClientNumber;
+    }
+    
+    /**
+     * 获取可接入的最大客户端数量
+     * @return string
+     */
+    public function getMaxClientNumber()
+    {
+        return $this->maxClientNumber;
+    }
+    
+    /**
+     * 设置软件有效天数
+     * @param string $softValideDays
+     */
+    public function setSoftValideDays($softValideDays)
+    {
+        $this->softValideDays = $softValideDays;
+    }
+    
+    /**
+     * 获取软件有效天数
+     * @return string
+     */
+    public function getSoftValideDays()
+    {
+        return $this->softValideDays;
+    }
+    
+    /**
+     * 设置客户详细信息
+     * @param string $clientInfo
+     */
+    public function setClientInfo($clientInfo)
+    {
+        $this->clientInfo = $clientInfo;
+    }
+    
+    /**
+     * 获取客户详细信息
+     * @return string
+     */
+    public function getClientInfo()
+    {
+        return $this->clientInfo;
+    }
+    
+    /**
+     * 设置公司名称
+     * @param string $companyName
+     */
+    public function setCompanyName($companyName)
+    {
+        $this->companyName = $companyName;
+    }
+    
+    /**
+     * 获取公司名称
+     * @param string
+     */
+    public function getCompanyName()
+    {
+        return $this->companyName;
+    }
+    
+    /**
+     * 设置电话号码
+     * @param string $tel
+     */
+    public function setTel($tel)
+    {
+        $this->tel = $tel;
+    }
+    
+    /**
+     * 获取电话号码
+     * @param string
+     */
+    public function getTel()
+    {
+        return $this->tel;
+    }
+    
+    /**
+     * 设置传真号码
+     * @param string $fax
+     */
+    public function setFax($fax)
+    {
+        $this->fax = $fax;
+    }
+    
+    /**
+     * 获取传真号码
+     * @param string
+     */
+    public function getFax()
+    {
+        return $this->fax;
+    }
+    
+    /**
+     * 设置联系人
+     * @param string $contact
+     */
+    public function setContact($contact)
+    {
+        $this->contact = $contact;
+    }
+    
+    /**
+     * 获取联系人
+     * @param string
+     */
+    public function getContact()
+    {
+        return $this->contact;
+    }
+    
+    /**
+     * 设置职业
+     * @param sting $profession
+     */
+    public function setProfession($profession)
+    {
+        $this->profession = $profession;
+    }
+    
+    /**
+     * 获取职业
+     * @return sting
+     */
+    public function getProfession()
+    {
+        return $this->profession;
+    }
+    
+    /**
+     * 设置手机号码
+     * @param string $mobile
+     */
+    public function setMobile($mobile)
+    {
+        $this->mobile = $mobile;
+    }
+    
+    /**
+     * 获取手机号码
+     * @param string
+     */
+    public function getMobile()
+    {
+        return $this->mobile;
+    }
+    
+    /**
+     * 设置email
+     * @param string $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+    
+    /**
+     * 获取email
+     * @param string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+    
+    /**
+     * 设置其他信息
+     * @param string $other
+     */
+    public function setOther($other)
+    {
+        $this->other = $other;
+    }
+    
+    /**
+     * 获取其他信息
+     * @return string
+     */
+    public function getOther()
+    {
+        return $this->other;
+    }
+    
+    /**
+     * 设置服务器主机/域名
+     * @param string $serverDomain
+     */
+    public function setServerDomain($serverDomain)
+    {
+        $this->serverDomain = $serverDomain;
+    }
+    
+    /**
+     * 获取服务器主机/域名
+     * @return string
+     */
+    public function getServerDomain()
+    {
+        return $this->serverDomain;
+    }
+    
+    /**
+     * 设置服务器CPU ID
+     * @param string $serverCpuId
+     */
+    public function setServerCpuId($serverCpuId)
+    {
+        $this->serverCpuId = $serverCpuId;
+    }
+    
+    /**
+     * 获取服务器CPU ID
+     * @return string
+     */
+    public function getServerCpuId()
+    {
+        return $this->serverCpuId;
+    }
+    
+    /**
+     * 设置服务器IP
+     * @param string $serverIp
+     */
+    public function setServerIp($serverIp)
+    {
+        $this->serverIp = $serverIp;
+    }
+    
+    /**
+     * 获取服务器IP
+     * @return string
+     */
+    public function getServerIp()
+    {
+        return $this->serverIp;
+    }
+    
+    /**
+     * 设置服务器MAC
+     * @param string $serverMac
+     */
+    public function setServerMac($serverMac)
+    {
+        $this->serverMac = $serverMac;
+    }
+    
+    /**
+     * 获取服务器MAC
+     * @return string
+     */
+    public function getServerMac()
+    {
+        return $this->serverMac;
+    }
+    
+    /**
+     * 获取license文件
+     * @return string
+     */
+    public function getLicense()
+    {
+        return json_encode(array(
+            'max_client_number'=>$this->getMaxClientNumber(),
+            'soft_valid_days'=>$this->getSoftValideDays(),
+            'client_info'=>array(
+                'company_name' => $this->getCompanyName(),
+                'tel' => $this->getTel(),
+                'fax' => $this->getFax(),
+                'contact' => $this->getContact(),
+                'profession' => $this->getProfession(),
+                'mobile' => $this->getMobile(),
+                'email' => $this->getEmail(),
+                'other' => $this->getOther(),
+            ),
+            'server_domain'=>$this->getServerDomain(),
+            'server_cpu_id'=>$this->getServerCpuId(),
+            'server_ip'=>$this->getServerIp(),
+            'server_mac'=>$this->getServerMac()
+        ));
+    }
+    
+    /**
+     * 获取license文件加密key
+     * 加密规则：
+     * （获取服务器CPU ID+获取服务器IP+获取服务器MAC）连接后的md5值
+     * @return string
+     */
+    public function getLicenseKey()
+    {
+        $str  = '';
+        $str .= $this->getServerCpuId();
+        $str .= $this->getServerIp();
+        $str .= $this->getServerMac();
+        return md5($str);
+    }
+    
+    /**
+     * 获取文件存储路径
+     * @return string
+     */
+    public function getFilePath()
+    {
+        return self::FILE_PATH;
+    }
+    
+    /**
+     * 文件名
+     * @param number $serial
+     * @return string
+     */
+    public function getFileName($serial)
+    {
+        return self::FILE_NAME_PREFIX.sha1(hexdec($serial)).self::FILE_EXT;
+    }
+    
+    /**
+     * 格式化license文件
+     * @param string $licenseStr
+     * @return string
+     */
+    public function getFormatLicense($licenseStr)
+    {
+        $str = self::LIC_START;
+        $str .= chr(10);
+        $line = ceil(strlen($licenseStr)/self::LICENSE_LINE_LENGTH);
+        for ($i=0;$i<$line;$i++){
+            $str .= substr($licenseStr, $i*self::LICENSE_LINE_LENGTH, self::LICENSE_LINE_LENGTH);
+            $str .= chr(10);
+        }
+        $str .= self::LIC_END;
+        return $str;
+    }
+    
+    /**
+     * 非格式化license文件
+     * @param string $licenseStr
+     * @return string
+     */
+    public function getUnFormatLicense($licenseStr)
+    {
+        return str_replace(chr(10),'',str_replace(self::LIC_END, '', str_replace(self::LIC_START, '', $licenseStr)));
+    }
+    
+    /**
+     * 替换后的license文件
+     * @param string $data
+     * @return string
+     * @deprecated
+     * @see \Common\License\License::getUnFormatLicense()
+     */
+    public static function getReplaceFormatLicense($data)
+    {
+        return str_replace(self::LIC_END, '', str_replace(self::LIC_START, '', $data));
+    }
+}

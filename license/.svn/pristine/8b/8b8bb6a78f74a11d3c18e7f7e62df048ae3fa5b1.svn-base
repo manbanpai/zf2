@@ -1,0 +1,128 @@
+<?php
+namespace Member\Form;
+
+use Zend\Form\Form;
+use Zend\Form\Element\Select;
+use Zend\Form\Element;
+
+class LicenseForm extends Form
+{
+    public function __construct($name=null)
+    {
+        parent::__construct('member_license');
+        $this->addElement();
+    }
+    
+    public function addElement()
+    {
+        $this->setAttribute('method', 'post');
+        $this->add(array(
+            'name' => 'id',
+            'type' => 'Hidden',
+        ));
+        $this->add(array(
+            'name' => 'max_client_number',            
+            'type' => 'Text',
+            'options' => array(
+                'label' => '',
+            ),
+            'attributes' => array(
+                'id' => 'max_client_number',
+                'required' => 'required',
+                'class' => 'form-control',
+            )
+        ));
+        $this->add(array(
+            'name' => 'soft_valid_days',
+            'type' => 'Text',
+            'options' => array(
+                'label' => ''
+            ),
+            'attributes' => array(
+                'id' => 'soft_valid_days',
+                'required' => 'required',
+                'class' => 'form-control',
+            )
+        ));
+        $this->add(array(
+            'name' => 'client_info',
+            'type' => 'Text',
+            'options' => array(
+                'label' => ''
+            ),
+            'attributes' => array(
+                'id' => 'client_info',
+                'required' => 'required',
+                'class' => 'form-control',
+            )
+        ));
+        $this->add(array(
+            'name' => 'server_domain',
+            'type' => 'Text',
+            'options' => array(
+                'label' => '',
+            ),
+            'attributes' => array(
+                'id' => 'server_domain',
+                'required' => 'required',
+                'class' => 'form-control',
+            )
+        ));
+        $this->add(array(
+            'name' => 'server_cpu_id',
+            'type' => 'Text',
+            'options' => array(
+                'label' => '',
+            ),
+            'attributes' => array(
+                'id' => 'server_cpu_id',
+                'required' => 'required',
+                'class' => 'form-control',
+            )
+        ));
+        $this->add(array(
+            'name' => 'server_ip',
+            'type' => 'Text',
+            'options' => array(
+                'label' => '',
+            ),
+            'attributes' => array(
+                'id' => 'server_ip',
+                'required' => 'required',
+                'class' => 'form-control',
+            )
+        ));
+        $this->add(array(
+            'name' => 'server_mac',
+            'type' => 'Text',
+            'options' => array(
+                'label' => '',
+            ),
+            'attributes' => array(
+                'id' => 'server_mac',
+                'required' => 'required',
+                'class' => 'form-control', 
+            )
+        ));
+        $this->add(array(
+            'name' => 'submit',
+            'type' => 'Submit',
+            'attributes' => array(
+                'value' => '添加',
+                'id' => 'submitbutton',
+                'class' => 'btn btn-info',
+            )
+        ));
+    }
+    
+    public function elementCertficate($arr=array())
+    {
+        $cert = new Select('certficate_id');
+        $cert->setAttribute('id', 'certficate_id');
+        $cert->setAttribute('required', 'required');
+        $cert->setAttribute('class', 'form-control');
+        //$cert->setDisableInArrayValidator(true);
+        $cert->setValueOptions($arr);        
+        $this->add($cert);
+    }
+}

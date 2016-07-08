@@ -1,0 +1,67 @@
+<?php
+namespace Common\Crypt\Rsa;
+
+class PrivateKey extends AbstractKey
+{
+    
+    public function __construct($pemString, $passpharse=null)
+    {
+        $result = openssl_pkey_get_private($pemString, $passpharse);
+        if (false === $result){
+            throw new \Exception('无法加载private key.');
+        }
+        
+        $this->pemString = $pemString;
+        $this->keyResource = $result;
+        $this->details = openssl_pkey_get_details($this->keyResource);        
+    }
+    
+    /**
+     * 从PEM格式的密钥文件创建私有密钥
+     * @param string $pemFile
+     * @param string $passPhrase
+     * @throws \Exception
+     * @return \Common\Crypt\Rsa\PrivateKey
+     */
+    public function fromFile($pemFile, $passPhrase = null)
+    {
+        if (!is_readable($pemFile)){
+            throw new \Exception('pem文件'.$pemFile.'不可读');
+        }
+        return new static(file_get_contents($pemFile), $passPhrase);
+    }
+    
+    /**
+     * 加密
+     * @see \Common\Crypt\AbstractKey::encrypt()
+     */
+    public function encrypt($data)
+    {
+        if (empty($data)){
+            return false;
+        }
+        $encrypted = '';
+        if (openssl_private_encrypt($data, $encrypted, $this->getKeyResource())){
+            return base64_encode($encrypted);
+        }
+    }
+    
+    /**
+     * 解密
+     * @see \Common\Crypt\AbstractKey::decrypt()
+     */
+    public function decrypt($data)
+    {
+        if (!is_string($data)){
+            return false;
+        }
+        if ('' === $data){
+            return false;
+        }
+        $str = base64_decode($data);
+        $encrypted = '';
+        if (openssl_private_decrypt($str, $encrypted, $this->getKeyResource())){
+            return trim($encrypted);
+        }
+    }
+}

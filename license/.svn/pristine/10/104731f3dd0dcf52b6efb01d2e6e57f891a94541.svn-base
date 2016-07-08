@@ -1,0 +1,9 @@
+license文件说明
+加密步骤
+1、收集license文件；
+2、公钥加密license文件，格式化输出文件。
+
+解密步骤
+1、公钥解密license文件；
+2、aes解密license文件(加密key为:license文件[服务器CPU ID+获取服务器IP+获取服务器MAC]的md5值)；
+

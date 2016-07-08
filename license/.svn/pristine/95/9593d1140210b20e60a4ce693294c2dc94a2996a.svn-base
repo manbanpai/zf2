@@ -1,0 +1,185 @@
+<?php
+namespace Member\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+use Member\Model\Company;
+use Member\Form\CompanyForm;
+
+class MemberCompanyController extends AbstractActionController
+{
+    protected $companyTable;
+    protected $areaTable;
+    
+    public function getCompanyTable()
+    {
+        if (!$this->companyTable){
+            $sm = $this->getServiceLocator();
+            $this->companyTable = $sm->get('Member\Model\CompanyTable');
+        }
+        return $this->companyTable;
+    }
+    
+    public function getAreaTable()
+    {
+        if (!$this->areaTable){
+            $sm = $this->getServiceLocator();
+            $this->areaTable = $sm->get('Member\Model\AreaTable');
+        }
+        return $this->areaTable;
+    }
+    
+    /**
+     * 浏览
+     * @see \Zend\Mvc\Controller\AbstractActionController::indexAction()
+     */
+    public function indexAction()
+    {
+        $page = (int)$this->params()->fromRoute('page', 1);
+        $paginator = $this->getCompanyTable()->getPaginator($page, 10);
+        $view = new ViewModel();
+        $view->setVariable('paginator', $paginator);
+        return $view;
+    }
+    
+    /**
+     * 添加
+     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     */
+    public function addAction()
+    {
+        $form = new CompanyForm();
+        $form->elementProvince($this->getAreaTable()->getAreaToSelect());
+        $form->elementCity(array('请选择'));
+        $form->elementArea(array('请选择'));
+        $request = $this->getRequest();
+        if ($request->isPost()){
+            $company = new Company();
+            $form->setInputFilter($company->getInputFilter());
+            $form->setData($request->getPost());
+            if ($form->isValid()){
+                $company->exchangeArray($form->getData());
+                $this->getCompanyTable()->saveCompany($company);
+                return $this->redirect()->toRoute('member', array(
+                    'contorller' => 'membercompany',
+                ));
+            }
+        }        
+        $view = new ViewModel();
+        $view->setVariable('form', $form);
+        return $view;
+    }
+    
+    public function editAction()
+    {
+        $id = (int) $this->params()->fromRoute('id', 0);
+        if (!$id){
+            return $this->redirect()->toRoute('member', array(
+                'contorller' => 'membercompany',
+                'action' => 'add',
+            ));
+        }
+        try {
+            $company = $this->getCompanyTable()->getCompany($id);
+        }catch (\Exception $e){
+            return $this->redirect()->toRoute('member', array(
+                'controller' => 'membercompany',
+            ));
+        }
+        $form = new CompanyForm();
+        $form->elementProvince($this->getAreaTable()->getAreaToSelect(), $company->province);
+        $form->elementCity($this->getAreaTable()->getAreaToSelect($company->province), $company->city);
+        $form->elementArea($this->getAreaTable()->getAreaToSelect($company->city),$company->area);
+        $form->bind($company);
+        $form->get('submit')->setAttribute('value', '修改');
+        $request = $this->getRequest();
+        if ($request->isPost()){
+            $form->setInputFilter($company->getInputFilter());
+            $form->setData($request->getPost());
+            if ($form->isValid()){
+                $this->getCompanyTable()->saveCompany($form->getData());
+                return $this->redirect()->toRoute('member', array(
+                    'controller' => 'membercompany',
+                ));
+            }
+        }
+        $view = new ViewModel();
+        $view->setVariable('form', $form);
+        $view->setVariable('id', $id);
+        return $view;
+    }
+    
+    /**
+     * 删除
+     * @throws \Exception
+     * @return \Zend\Http\Response
+     */
+    public function deleteAction()
+    {
+        $id = (int) $this->params()->fromRoute('id', 0);
+        $view = new ViewModel();
+        $view->setTemplate(true);
+        if ($this->getCompanyTable()->deleteCompany($id) > 0){
+            return $this->redirect()->toRoute('member', array(
+                'contorller' => 'membercompany',
+            ));
+        }else{
+            throw new \Exception();
+        }
+    }
+    
+    /*
+     * ajax 获取市
+     */
+    public function cityAction()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $request = $this->getRequest();
+            $data = $request->getPost();
+            $id = (int)$data->id;
+            $str = '<select name="city" id="city" onchange="_getArea()">';
+            $str .= '<option value=0>请选择</option>';
+            if ($id){
+                $data = $this->getAreaTable()->getArea($id);
+                foreach ($data as $row){
+                    $str .= '<option value="'.$row->area_id.'">';
+                    $str .= $row->title;
+                    $str .= '</option>';
+                }
+            }
+            $str .= '</select>';
+            $arr = array(
+                'city'=>$str,
+                'area'=>'<select name="area" id="area"><option value=0>请选择</option></select>',
+            );
+            $str = json_encode($arr);
+            echo $str;
+            return $this->response;
+        }
+    }
+    
+    /**
+     * ajax 获取区县
+     */
+    public function areaAction()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $request = $this->getRequest();
+            $data = $request->getPost();
+            $id = (int)$data->id;
+            $str = '<select name="area" id="area">';
+            $str .= '<option value=0>请选择</option>';
+            if ($id){
+                $data = $this->getAreaTable()->getArea($id);
+                foreach ($data as $row){
+                    $str .= '<option value="'.$row->area_id.'">';
+                    $str .= $row->title;
+                    $str .= '</option>';
+                }
+            }
+            $str .= '</select>';
+            echo $str;
+            return $this->response;
+        }
+    }
+}

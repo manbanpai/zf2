@@ -1,0 +1,148 @@
+<?php
+namespace Log\Controller\Plugin;
+
+use Zend\Session\Container;
+
+use Zend\Db\Sql\Sql;
+
+use \Exception;
+
+use Zend\Log\Writer\Db;
+
+use Zend\Db\Adapter\Adapter;
+
+use Zend\Log\Logger;
+
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\XmlRpc\Value\String;
+
+class LogPlugin extends AbstractPlugin
+{
+	protected $sesscontainer;
+	private $userId = 0;
+	
+	//获取SESSION
+	private function getSessContainer()
+	{
+		if (!$this->sesscontainer) {
+			$this->sesscontainer = new Container('login');
+		}
+		return $this->sesscontainer;
+	}
+	
+	//设置用于ID
+	public function setUserId($id){
+		$this->userId = $id;
+	}
+	
+	/**
+	* 函数用途描述
+	* 系统进程监听该事件
+	* 记录当前用户所有操作轨迹
+	* @date: 2016年6月30日
+	* @author: cuik
+	* @param: Object
+	*/
+	public function doWriterLog($e,$sm)
+	{
+		$sess = $this->getSessContainer();
+		
+		$adapter = $sm->get('Zend\Db\Adapter\Adapter');
+		
+		if($this->userId)
+			$userId = $this->userId;
+		else
+			$userId = 0;
+		
+		if($sess->offsetExists('_adminUserId')){
+			$userId = (int) $sess->offsetGet('_adminUserId');
+		}
+		
+		$path = $this->getPath($e);
+		
+		$cate_name = array(
+				'index'=>'列表',
+				'add'=>'添加',
+				'edit'=>'编辑',
+				'delete'=>'删除',
+				'download'=>'下载',
+				'export'=>'导出',
+				'import'=>'导入',	
+				'statistics'=>'统计',
+				'backup'=>'备份',
+				'set'=>'设置',
+				'welcome'=>'欢迎页',
+				'out'=>'退出',
+		        'licensedown'=>'License下载',
+		        'certdown'=>'证书下载',
+		        'audit'=>'会员公司信息审核',
+		        'apply'=>'证书申请',
+		
+			);
+		
+		$name = '';
+		if($path['controller'] == 'login' && $path['action'] == 'index'){
+			$name = '登录';
+		}else if($path['controller'] == 'index' && $path['action'] == 'index'){
+		    $name = '';
+		}else{
+		    if(isset($cate_name[$path['action']])){
+			    $name = $cate_name[$path['action']];
+		    }
+		}
+
+		if($name != ''){
+    		$values = array(
+    				'user_id'=>$userId,
+    				'cate_name'=>$name,
+    				'url'=>implode('/', $path),
+    				'create_time'=>time(),
+    			);
+    		
+    		$this->insert($adapter,'lic_log', $values);
+		}
+	}
+	
+	/**
+	* 函数用途描述
+	* 数据库操作
+	* @date: 2016年6月30日
+	* @author: cuik
+	* @param: Object String Array
+	* @return: int
+	*/
+	public function insert($adapter,$table,$values)
+	{
+		if($table && !empty($values)){
+			$sql = new Sql($adapter);
+			$insert = $sql->insert($table);
+			$insert->values($values);
+			$statement = $sql->prepareStatementForSqlObject($insert);
+			$id = $statement->execute();
+			return $id;
+		}
+	}
+	
+	/**
+	 * 函数用途描述
+	 * 该方法返回一个有模块、控制器、操作组成的数组
+	 * @date: 2016年6月30日
+	 * @author: cuik
+	 * @param: Object
+	 * @return: array
+	 */
+	public function getPath($e){
+		$controller = $e->getTarget();
+		$controllerClass = get_class($controller);
+		
+		$moduleName = strtolower(substr($controllerClass, 0, strpos($controllerClass, '\\')));
+		$routeMatch = $e->getRouteMatch();
+		
+		$actionName = strtolower($routeMatch->getParam('action', 'not-found')); // get the action name
+		$controllerName = $routeMatch->getParam('controller', 'not-found');     // get the controller name
+		$cname = explode('\\', $controllerName);
+		$cn = array_pop($cname);
+		$controllerName = strtolower($cn);
+		return array('module'=>$moduleName,'controller'=>$controllerName,'action'=>$actionName);
+	}
+}

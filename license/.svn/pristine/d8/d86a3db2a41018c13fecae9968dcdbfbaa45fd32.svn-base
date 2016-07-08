@@ -1,0 +1,155 @@
+<?php
+namespace Common\Crypt\Aes;
+
+class Aesfile
+{
+    /**
+     * 读取文件的字节数
+     * @var string
+     */
+    const READ_COUNT = 64;
+    
+    /**
+     * aes读取的字节数
+     * @var string
+     */
+    const AES_BLOCK_SIZE = 16;
+    
+    public function getHex($dec)
+    {
+        
+    }
+    
+    /**
+     * 加密加补码
+     * @param string $data
+     * @return string
+     */
+    public function dataComplement($data)
+    {
+        $len = strlen($data);
+        $mod = $len % self::AES_BLOCK_SIZE;
+        $comp = self::AES_BLOCK_SIZE - $mod;
+        $s = '';
+        for ($i=0;$i<$comp;$i++){
+            if ($mod==0){
+                $s .= strtoupper(dechex($mod)).strtoupper(dechex($mod));
+            }else{
+                $s .= strtoupper(dechex($comp)).strtoupper(dechex($comp));
+            }
+        }
+        $s = $this->hexToStr($this->strToHex($data).$s);
+        return $s;
+    }
+    
+    /**
+     * 解密减补码
+     * @param string $data
+     * @return string
+     */
+    public function dataUnComplement($data)
+    {
+        $str = $this->strToHex($data);
+        $comp = substr($str, strlen($str)-1,1);
+        if ($comp==='0x0'){
+            $s = substr($str, 0, strlen($str)-self::AES_BLOCK_SIZE*2);
+        }else{
+            $s = substr($str, 0, strlen($str)-hexdec($comp)*2);
+        }
+        return $this->hexToStr($s);
+    }
+
+    /**
+     * 解密
+     * @see \Common\Crypt\Aes\AbstractAes::encrypt()
+     * @return string
+     */
+    public function encrypt(Aes $aes, $data)
+    {
+        $data = $this->dataComplement($data);        
+        $block = $this->getBlockSize();
+        $length = strlen($data);
+        $line = ceil($length/$block);
+        $s = '';
+        for ($i=0;$i<$line;$i++){
+            $e = substr($data, $i*$block, $block);
+            $s .= $aes->encrypt($e);
+        }        
+        return base64_encode($s);
+    }
+    
+    /**
+     * 加密
+     * @see \Common\Crypt\Aes\AbstractAes::decrypt()
+     * @return string
+     */
+    public function decrypt(Aes $aes, $data)
+    {
+        $data = base64_decode($data);
+        $block = $this->getBlockSize();
+        $length = strlen($data);
+        $line = ceil($length/$block);
+        $s = '';
+        for($i=0;$i<$line;$i++){
+            $d = substr($data, $i*$block, $block);
+            $s .= $aes->decrypt($d);            
+        }
+        return $this->dataUnComplement($s);
+    }
+    
+    /**
+     * 字符串转16进制
+     * @param string $string
+     * @return string
+     */
+    public function strToHex($string)
+    {
+        $hex = '';
+        for ($i=0;$i<strlen($string);$i++){
+            $hex .= dechex(ord($string[$i]));
+        }
+        return strtoupper($hex);
+    }
+    
+    /**
+     * 16进制转字符串
+     * @param string $hex
+     * @return string
+     */
+    public function hexToStr($hex)
+    {
+        $string = "";
+        for ($i=0;$i<strlen($hex)-1;$i+=2)
+            $string .= chr(hexdec($hex[$i].$hex[$i+1]));
+        return $string;
+    }
+    
+    /**
+     * 加密块大小
+     * @return number
+     */
+    public function getBlockSize()
+    {
+        return self::READ_COUNT * self::AES_BLOCK_SIZE;
+    }
+    
+    /**
+     * 文件总大小
+     * @param string $file
+     */
+    public function getFileSize($file)
+    {
+        return filesize($file);
+    }
+    
+    /**
+     * 每一块大小
+     * @param number $total
+     * @param number $block
+     * @return number
+     */
+    public function getTotalBlock($total,$block)
+    {
+        return ceil($total/$block);
+    }
+}

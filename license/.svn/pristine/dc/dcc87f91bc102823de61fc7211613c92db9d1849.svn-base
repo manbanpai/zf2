@@ -1,0 +1,128 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('ca', array('controller'=>'cert','action'=>'index'))?>">返回</a>
+</div>
+<br>
+<br>
+<?php 
+$form = $this->form;
+$form->setAttribute('action', $this->url('ca', array('controller'=>'cert','action'=>'editIssuer','id'=>$this->id)));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formhidden($form->get('id'));
+?>
+<table class="table">
+    <tr>
+        <td><b>证书持有者所在国家(C)：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('issuer_country_name'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>证书持有者所在州或省份(ST)：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('issuer_state_or_province_name'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>证书持有者所在城市(L)：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('issuer_locality_name'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>证书持有者所属组织或公司(O)：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('issuer_organization_name'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>证书持有者所属部门(OU)：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('issuer_organizational_unit_name'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>            
+        </td>
+    </tr>
+    <tr>
+        <td><b>证书持有者的通用名(CN)：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('issuer_common_name'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>证书持有者的通信邮箱(E)：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('issuer_email_address'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>    
+    <tr>
+        <td><b>证书持有者姓名(SN)：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('issuer_surname'));?></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <?php echo $this->formrow($form->get('submit'));?>
+            </div>            
+        </td>
+    </tr>
+</table>
+<?php 
+echo $this->form()->closeTag();
+?>
+

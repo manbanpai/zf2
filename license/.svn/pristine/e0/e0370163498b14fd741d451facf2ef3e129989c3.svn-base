@@ -1,0 +1,166 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('ca', array('controller'=>'company'));?>">返回</a>
+</div>
+<br><br>
+<?php 
+$form = $this->form;
+$form->setAttribute('action', $this->url('ca', array('controller'=>'company','action'=>'add')));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formhidden($form->get('id'));
+?>
+<table class="table">
+    <tr>
+        <td><b>公司名称：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formRow($form->get('company_name'));?></div>
+                <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>电话：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formRow($form->get('tel'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>传真：</b></td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('fax'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>联系人：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('contacts'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>职业：</b></td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('vocation'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>手机：</b></td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('mobile'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Email：</b></td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('email'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>地区：</b>
+        </td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-2">
+                    <span id="_province">
+                        <?php 
+                            echo $this->formrow($form->get('province'));
+                        ?>
+                    </span>
+                </div>
+                <div class="col-xs-2">
+                    <span id="_city">
+                        <?php 
+                            echo $this->formrow($form->get('city'));
+                        ?>
+                    </span>
+                </div>
+                <div class="col-xs-2">
+                    <span id="_area">
+                        <?php 
+                            echo $this->formrow($form->get('area'));
+                        ?>
+                    </span>
+                </div>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>地址：</b></td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('address'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>网址：</b></td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('url'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>公司介绍：</b></td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('introduce'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>公司Logo:</b></td>
+    </tr>
+    <tr>        
+        <td>
+            <div class="form-group">
+                <div class="col-xs-11"><?php echo $this->formrow($form->get('logo'));?></div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <?php 
+                echo $this->formSubmit($form->get('submit'));
+            ?>
+        </td>
+    </tr>
+</table>
+<?php 
+echo $this->form()->closeTag();
+?>

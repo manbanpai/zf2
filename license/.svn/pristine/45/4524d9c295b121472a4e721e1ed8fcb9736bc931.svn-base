@@ -1,0 +1,79 @@
+<?php
+namespace License\Crypt;
+
+class PublicKey
+{
+    //测试证书
+    private $certficate = '-----BEGIN CERTIFICATE-----
+MIID8jCCAtqgAwIBAgIEV10pWjANBgkqhkiG9w0BAQsFADCBkTELMAkGA1UEBhMC
+Q04xEDAOBgNVBAgMB0JlaUppbmcxEDAOBgNVBAcMB0JlaUppbmcxDTALBgNVBAoM
+BFBaREYxFDASBgNVBAsMC0RldmVsb3BtZW50MRgwFgYDVQQDDA93d3cucG9yaWVu
+dC5jb20xHzAdBgkqhkiG9w0BCQEWEHNlcnZpY2VAcHpkZi5jb20wHhcNMTYwNjEy
+MDkyMDI2WhcNMTYwNjEzMDkyMDI2WjCBkTELMAkGA1UEBhMCQ04xEDAOBgNVBAgM
+B0JlaUppbmcxEDAOBgNVBAcMB0JlaUppbmcxDTALBgNVBAoMBFBaREYxFDASBgNV
+BAsMC0RldmVsb3BtZW50MRgwFgYDVQQDDA93d3cucG9yaWVudC5jb20xHzAdBgkq
+hkiG9w0BCQEWEHNlcnZpY2VAcHpkZi5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IB
+DwAwggEKAoIBAQC43VNhPey0Ow/6NiFowTPUYVWegrwfkwzdcspt+g/bVPJk2in9
+cwDSjfXjJ5BamXdHb0qKhS50/mue4mZuvKM1KshMrgSJN6a3isKJV6Wg9Ru8xqCk
+gzk8qu5J+eQr5p2mYeVEGgacRkIog0uDj6hMPvp0YVkXoY96x1PnKFmwKTFD/C9G
+DFH3dR2Vz5+CljEkRz/6BA71gi4MHAgPh0FVPrdxLY8NN3jyOQbXVBYtG9UWtFw4
+oj/tjZvhfDdsBsU8180IhsNHa6duaGtYPIVfiFNKGb8qzos0prtnw3z9sxMQydcl
+hJdDBc4A9sjVoddGMSw78am+R1vB/RnjdMc9AgMBAAGjUDBOMB0GA1UdDgQWBBQB
+95o0PGPfw0As4YAx+2eATms9ZzAfBgNVHSMEGDAWgBQB95o0PGPfw0As4YAx+2eA
+Tms9ZzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQCDaoAqJO164oYr
+RDGed0B/PIZ9mc8n9WpWSLeZlwLanlCex8YfAlwlXgHEtAs/mvNlfVnQKNT63s2x
+U1haQp5F0u5Q+iJWyRw2FUGdBnpjPHSSW/EUomNR/69Va5OwAqyvouE427XFw7H7
+PexT4jR0KyGOHF+vS7VaNBjqRSK6CQ54YoHlZVQ9QQUvrhdwyiP82Sp7r84VPgF3
+Ccoq/8t3WiFOYlhzo5jQ2t7dvzaEouI4v2EBeTdesZltK7BoVx/i/uELNHm9BjtV
+XPwri6ZveVHyeiEjtRLl/BOaL5inigk9sldnn2KPzkX0Ab1Q+QNH8EW3xgOvGL4Y
+zL7L702n
+-----END CERTIFICATE-----
+    ';
+    //测试私钥
+    private $privatekey = '-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC43VNhPey0Ow/6
+NiFowTPUYVWegrwfkwzdcspt+g/bVPJk2in9cwDSjfXjJ5BamXdHb0qKhS50/mue
+4mZuvKM1KshMrgSJN6a3isKJV6Wg9Ru8xqCkgzk8qu5J+eQr5p2mYeVEGgacRkIo
+g0uDj6hMPvp0YVkXoY96x1PnKFmwKTFD/C9GDFH3dR2Vz5+CljEkRz/6BA71gi4M
+HAgPh0FVPrdxLY8NN3jyOQbXVBYtG9UWtFw4oj/tjZvhfDdsBsU8180IhsNHa6du
+aGtYPIVfiFNKGb8qzos0prtnw3z9sxMQydclhJdDBc4A9sjVoddGMSw78am+R1vB
+/RnjdMc9AgMBAAECggEBAITVK9t8tn/OzK06hgkSgl6BzhbG08xQSnc4y3H4s7oj
+MMT86h0erKGetecR/6zKByZCNqqQBhC027nf7kB1tUQ3yJMom0PJxDawMxai7vVY
+CiU8CCQN0mvgWra3I5fT7sWmJCoqFUPnTBR2OyV+bSzUN/y2EmFjiohrf8NigAeO
+aQPdxAz7+JSGb3SRpEx9YBGlRu29sbsMYCj6YpK5WvwDfA4hg6tHRVPY8LEWE23C
+aV1/cus2hHq6yLFlYMh36bRRZJX1NdkaoRtFQm+hxGG/J707CWfOnrfY5jswXXpe
+Nfio27m385FUhuzLr2NrjpCBf9snrcavUw4V6z29RuECgYEA33vuPerW9x8d/9F3
+fNhL0HDjYDLrTH0NdTH/meeIbctMfETM+E+9w7Pl3nkIomDhFFtQr1H3V+SIPTf8
+BrsOQ/8oCzbWs2+mnIpyQsuf69thbvQ4rk+++uOWCQrEdWjhD0/6e07xlx3bdjtR
+kDnFFDoOa2s46MU7poSgUGGlJNUCgYEA08LwqzrGguyRkTposIpkZ1PUSxhkl94m
+48I3M3RkUsSCPOd4JTRZ17bbTRAnpWvKbBm1undmnK570vcIWg/u8QVDSZgCiAbH
+syITFL1zPuxXPrpWY2PkU3zQJVh5tOLTyPipzYTCig/otY//MMvcDiY5YITVbjmm
+ZLRRv+y9bMkCgYBq+fzZ4K8Tze5jRVZoCXWJCnCc3OLrUzT883kBp+YTgGxVU+21
+sx4ILvYK3271o2A6iVd/BMJcbUWV4FWgtyul+t6lN5PggsKDTnZRaP1dPj9OiFMV
+hZDKseRg4amW9iQ9WzBwlCJrDty9pLlvS2f+PagnXUT5j2f1VqkSsRsHHQKBgEBu
+z1X6g05w9vXuhM46vcQm4LCc0nbXNJQWkz9HygLZIhuv/oGrhS66x82R/c46lxP/
+WqlLDWDdQnX1jogA0x5pEIlDBHopPfhGhPHJl1htBzrh7ck+KsowbxD988JTRkef
+SeNr4tmpb5BXKTnKvcFcZhb1NA/e4L9BkqJIQXbpAoGBAI0uGNxoyoT0rrBPqPKR
+h0raSPwopE9ZmKwp+pOqWJ2VBqzhv6Cb14yHjaklyAiXGirw3auBPjWrTJvq2oUL
+873/n4XoPjOWC9qZKLW7wwOZn3VOLoYizgEffKgOEqIwBWSQ10aoPkLTdJMZ+ZCw
+vGWxkhtzUOXEuksirI8vNP8O
+-----END PRIVATE KEY-----
+    ';
+    
+    public $publickey;
+    
+    public function getPublicKey()
+    {
+        return $this->publickey;
+    }
+    
+    public function setPublicKey($cert='')
+    {
+        if (empty($cert)){
+            $cert = $this->certficate;
+        }
+        $this->publickey = openssl_pkey_get_public($cert);
+        $this->publickey = openssl_pkey_get_details($this->publickey);
+        $this->publickey = $this->publickey['key'];
+    }
+}

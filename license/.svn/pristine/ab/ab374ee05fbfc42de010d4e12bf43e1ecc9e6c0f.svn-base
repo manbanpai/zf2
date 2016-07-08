@@ -1,0 +1,69 @@
+<?php
+namespace Log\Controller;
+
+use Zend\Session\Container;
+
+use Zend\View\Model\ViewModel;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class LogController extends AbstractActionController
+{
+	protected $logTable;
+	protected $session;
+	
+	public function getSess()
+	{
+		if(!$this->session){
+			$this->session = new Container('login');
+		}
+		return $this->session;
+	}
+	
+	public function indexAction()
+	{
+		$sess = $this->getSess();
+		$userId = 0;
+		
+		if($sess->offsetExists('_adminUserId')){
+			$userId = $sess->offsetGet('_adminUserId');
+		}
+		
+		$params = array(
+				'where'=>array(
+						'display'=>'1',
+						"url!='application/index/welcome'",
+						"url!='application/index/index'",
+						"url!='log/log/index'",
+						'user_id'=>$userId
+						),
+				);
+		
+		$pagin = array('paginated'=>true,'join'=>array(
+						'name'=>array('u'=>'lic_user'),
+						'on'=>'u.id = t.user_id',
+						'columns'=>array('username'=>'username'),
+					),'order'=>'id desc',);
+		$paginator = $this->getLogTable()->fetchAll(array_merge($params,$pagin));
+		$paginator->setCurrentPageNumber((int)$this->params()->fromQuery('page',1));
+		$paginator->setItemCountPerPage(10);
+	
+		//统计
+		$data = $this->getLogTable()->fetchAll($params);
+		$count = count($data);
+		
+		$view = new ViewModel(array(
+				'paginator'=>$paginator,
+				));
+		return $view;
+	}
+	
+	public function getLogTable()
+	{
+		if(!$this->logTable){
+			$sm = $this->getServiceLocator();
+			$this->logTable = $sm->get('Log\Model\LogTable');
+		}
+		return $this->logTable;
+	}
+}

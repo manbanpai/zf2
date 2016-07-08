@@ -1,0 +1,42 @@
+<div class="btn-group" role="group" aria-label="...">
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('ca', array('controller'=>'cert','action'=>'add'))?>">生成CA证书</a>
+    <?php 
+    if (!$this->issuerId){
+    ?>
+    <a type="button" class="btn btn-info" href="<?php echo $this->url('ca', array('controller'=>'cert','action'=>'addIssuer'))?>">增加颁发者</a>
+    <?php 
+    }else{
+    ?>
+        <a type="button" class="btn btn-info" href="<?php echo $this->url('ca', array('controller'=>'cert','action'=>'editIssuer','id'=>$issuerId))?>">修改颁发者</a>
+    <?php 
+    }
+    ?>
+</div>
+<br>
+<br>
+<table class="table table-hover">
+    <tr>
+        <th><b>序列号</b></th>
+        <th><b>有效期开始</b></th>
+        <th><b>有效期结束</b></th>
+        <th><b>有效天数</b></th>
+        <th><b>操作</b></th>
+    </tr>
+    <?php 
+    if(count($this->paginator)):
+    foreach ($this->paginator as $item):
+    ?>
+    <tr>
+        <td><?php echo $item->serial;?></td>
+        <td><?php echo $item->begin_time;?></td>
+        <td><?php echo $item->end_time;?></td>
+        <td><?php echo (int)$item->valid_days;?></td>
+        <td><a href="<?php echo $this->url('ca', array('controller'=>'cert', 'action'=>'certdown', 'id'=>$item->id));?>">公钥证书下载</a> | <a href='<?php echo $this->url('ca', array('controller'=>'cert', 'action'=>'pkeydown', 'id'=>$item->id));?>'>私钥下载</a></td>
+    </tr>
+    <?php 
+    endforeach;
+    endif;
+    ?>
+</table>
+
+<?php echo $this->paginationcontrol($this->paginator,'Sliding','pagination.phtml');?>

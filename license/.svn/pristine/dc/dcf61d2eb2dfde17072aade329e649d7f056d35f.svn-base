@@ -1,0 +1,162 @@
+<?php
+namespace System\Controller;
+
+use Zend\Db\Sql\Select;
+
+use Application\Components\Controller;
+
+use System\Model\User;
+
+use System\Form\UserForm;
+
+use Zend\View\Model\ViewModel;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+use System\Model\UserTable;
+
+use Common\Helper\Helper;
+
+class UserController extends AbstractActionController
+{
+	protected $userTable;
+	protected $userRoleTable;
+	
+	public function addAction()
+	{
+		
+		$form = new UserForm();
+		$form->get('submit')->setValue('Add');
+		//获取角色列表
+		$this->setUserRoleList($form);
+		
+		$request = $this->getRequest();
+		if($request->isPost()){
+			$user = new User();
+			$form->setInputFilter($user->getInputFilter());
+			$form->setData($request->getPost());
+		
+			if($form->isValid()){
+				$user->exchangeArray($form->getData());
+				//对特殊数据进行处理
+				$user->createtime = time();
+				$range = new Helper();
+				$user->password_rand = $range->getRange(4);
+				$user->password = substr(md5(md5($user->password).$user->password_rand),2,28);
+				$this->getUserTable()->saveUser($user);
+				return $this->redirect()->toRoute('system',array('controller'=>'user'));
+			}
+		}
+		
+		return array('form'=>$form);
+	}
+	
+	public function editAction()
+	{
+		$id = (int) $this->params()->fromRoute('id',0);
+		if(!$id){
+			return $this->redirect()->toRoute('system',array(
+				'controller'=>'user',
+				'action'=>'add',
+				));
+		}
+		
+		try {
+			$user = $this->getUserTable()->getUser($id);
+		} catch (\Exception $ex) {
+			return $this->redirect()->toRoute('system',array(
+				'controller'=>'user',
+				'action'=>'index',
+				));
+		}
+		$form = new UserForm();
+		//获取角色列表
+		$this->setUserRoleList($form);
+		$form->bind($user);
+		$form->get('submit')->setValue('Edit');
+		$password = $user->password;
+		$rand = $user->password_rand;
+		$form->get('password')->setValue('');
+		$time = $user->createtime;
+		
+		$request = $this->getRequest();
+		if($request->isPost()){
+			$form->setInputFilter($user->getInputFilter());
+			$form->setData($request->getPost());
+			$form->getValidationGroup('email');
+			if($form->isValid()){
+				$user->createtime = $time;
+				if($request->getPost('password') == ''){
+					$user->password_rand = $rand;
+					$user->password = $password;
+				}else{
+					$user->password_rand = $rand;
+					$user->password = substr(md5(md5($request->getPost('password')).$user->password_rand),2,28);
+				}
+				$this->getUserTable()->saveUser($user);
+				return $this->redirect()->toRoute('system',array('controller'=>'user'));
+			}
+		}
+		return array('id'=>$id,'form'=>$form);
+	}
+	
+	public function deleteAction()
+	{
+		$id = (int)$this->params()->fromRoute('id',0);
+		if(!$id){
+			$this->redirect()->toRoute('system',array('controller'=>'user'));
+		}
+		
+		$request = $this->getRequest();
+		if($request->isGet()){
+			$this->getUserTable()->deleteUser($id);
+			$this->redirect()->toRoute('system',array('controller'=>'user'));
+		}
+	}
+	
+	public function indexAction()
+	{
+		$paginator = $this->getUserTable()->fetchAll(array(
+				'paginated'=>true,
+				'order'=>'id desc',
+				'join'=>array(
+					'name'=>array('r'=>'lic_user_role'),
+					'on'=>'r.id=t.role_id',
+					'columns'=>array('role_name'=>'role_name'),
+					'type'=>''	
+					)
+				));
+		//设置当前页，如果不存在页面则默认设置为第一页
+		$paginator->setCurrentPageNumber((int)$this->params()->fromQuery('page',1));
+		//设置每个分页将显示的记录行数
+		$paginator->setItemCountPerPage(5);
+		$view = new ViewModel(array('paginator'=>$paginator));
+		return $view;
+	}
+	
+	public function setUserRoleList($form){
+		$data = $this->getUserRoleTable()->fetchAll(array('order'=>'id desc'));
+		$arr = array();
+		foreach($data as $d){
+			$arr[$d->id] = $d->role_name;
+		}
+		
+		$form->get('role_id')->setValueOptions($arr);
+	}
+	
+	public function getUserTable(){
+		if(!$this->userTable){
+			$sm = $this->getServiceLocator();//获取本地已经初化的服务管理器及服务
+			$this->userTable = $sm->get('System\Model\UserTable');
+		}
+		return $this->userTable;
+	}
+	
+	public function getUserRoleTable(){
+		if(!$this->userRoleTable){
+			$sm = $this->getServiceLocator();//获取本地已经初化的服务管理器及服务
+			$this->userRoleTable = $sm->get('System\Model\UserRoleTable');
+		}
+		return $this->userRoleTable;
+	}
+}

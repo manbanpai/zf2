@@ -1,0 +1,122 @@
+<h3>欢迎进入License管理系统！</h3>
+<br>
+<div class="alert alert-success alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>说明：</strong> 本页面为快速导航及部分数据统计.
+</div>
+<style>
+    .list-inline li{margin:1em 1.5em -1em 1.5em;font:14px;line-height:20px;}
+    .list-inline li .title a{font-size: 2em;font-weight: bold;color: #999;line-height: 20px;}
+    .list-inline li .detail{font-size: 1.5em;color: #555;line-height:20px}
+</style>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+		  <!-- Default panel contents -->
+		  <div class="panel-heading">数据统计</div>
+		  <div class="panel-body">
+		    <ul class="list-inline" style="text-align:center;">
+		    	<li><p class="title"><a href="<?php echo $this->url('system',array('controller'=>'user'))?>" target="main"><?php echo number_format($userCount);?></a></p>
+		    	<p class="detail">用户数量</p></li>
+		    	<li><p class="title"><a href="<?php echo $this->url('system',array('controller'=>'user'))?>" target="main"><?php echo number_format($caCount);?></a></p>
+		    	<p class="detail">证书数量</p></li>
+		    	<li><p class="title"><a href="<?php echo $this->url('member',array('controller'=>'license'))?>" target="main"><?php echo number_format($licenseCount);?></a></p>
+		    	<p class="detail">License数量</p></li>
+		    	<li><p class="title"><a href="<?php echo $this->url('log',array('controller'=>'log'))?>" target="main"><?php echo number_format($logCount);?></a></p>
+		    	<p class="detail">日志数量</p></li>
+		    </ul>
+		  </div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	
+	<div class="col-md-6">
+		<div class="panel panel-default">
+		  <!-- Default panel contents -->
+		  <div class="panel-heading">License<a href="<?php echo $this->url('member',array('controller'=>'license'))?>" target="main"><span class="badge" style="float:right;background: #F89406;color:white">+&nbsp;<?php echo number_format($licenseCount);?></span></a></div>
+		  <div class="panel-body">
+    		  <!-- Table -->
+    		  <table class="table table-hover" style="margin:0 auto;margin-top:10px;width:95%">
+    		  	<tr style="border-bottom:1px solid #DDDDDD;">
+    		  		<th></th>
+    		  		<th>服务器MAC</th>
+    		  		<th>服务器IP</th>
+    		  		<th>最后登录时间</th>
+    		  		<th>操作</th>
+    		  	</tr>
+    		  	<?php foreach($license as $l):?>
+    		    <tr style="border-bottom:1px solid #DDDDDD;margin:0 auto;width:95%">
+    		    	<td></td>
+    		    	<td><?php echo $l['server_mac']?></td>
+    		    	<td><?php echo $l['server_ip']?></td>
+    		    	<td><?php if($l['create_time'] != 0){echo date('Y/m/d H:i:s',$l['create_time']);}else{echo '--';}?></td>
+    		    	<td><a href="<?php echo $this->url('member',array('controller'=>'license','action'=>'acl_details','id'=>$l['id']))?>" target="main">查看</a></td>
+    		    </tr>
+    		    <?php endforeach;?>
+    		    <tr>
+    		    	<td></td>
+    		    	<td><a href="<?php echo $this->url('member',array('controller'=>'license'))?>" target="main">更多...</a></td>
+    		    </tr>
+    		  </table>
+		  </div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+		  <!-- Default panel contents -->
+		  <div class="panel-heading">最新用户<a href="<?php echo $this->url('system',array('controller'=>'user'))?>" target="main"><span class="badge" style="float:right;background: #F89406;color:white">+&nbsp;<?php echo number_format($userCount);?></span></a></div>
+
+		  <!-- Table -->
+		  <table class="table table-hover" style="margin:0 auto;margin-top:10px;width:95%">
+		  	<tr style="border-bottom:1px solid #DDDDDD;">
+		  		<th></th>
+		  		<th>用户名</th>
+		  		<th>邮箱</th>
+		  		<th>最后登录时间</th>
+		  	</tr>
+		  	<?php foreach($user as $u):?>
+		    <tr style="border-bottom:1px solid #DDDDDD;margin:0 auto;width:95%">
+		    	<td></td>
+		    	<td><?php echo $u['username']?></td>
+		    	<td><?php echo $u['email']?></td>
+		    	<td><?php if($u['last_login_time'] != 0){echo date('Y/m/d H:i:s',$u['last_login_time']);}else{echo '--';}?></td>
+		    </tr>
+		    <?php endforeach;?>
+		    <tr>
+		    	<td></td>
+		    	<td><a href="<?php echo $this->url('system',array('controller'=>'user'))?>" target="main">更多...</a></td>
+		    </tr>
+		  </table>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+		  <!-- Default panel contents -->
+		  <div class="panel-heading">证书<a href="<?php echo $this->url('ca',array('controller'=>'cert'))?>" target="main"><span class="badge" style="float:right;background: #F89406;color:white">+&nbsp;<?php echo number_format($caCount);?></span></a></div>
+
+		  <!-- Table -->
+		  <table class="table table-hover" style="margin:0 auto;margin-top:10px;width:95%">
+		  	<tr style="border-bottom:1px solid #DDDDDD;">
+		  		<th></th>
+		  		<th>序列号</th>
+		  		<th>结束时间</th>
+		  		<th>创建时间</th>
+		  	</tr>
+		  	<?php foreach($ca as $c):?>
+		    <tr style="border-bottom:1px solid #DDDDDD;margin:0 auto;width:95%">
+		    	<td></td>
+		    	<td><?php echo $c['serial']?></td>
+		    	<td><?php echo $c['end_time']?></td>
+		    	<td><?php if($c['createtime'] != 0){echo date('Y/m/d H:i:s',$c['createtime']);}else{echo '--';}?></td>
+		    </tr>
+		    <?php endforeach;?>
+		    <tr>
+		    	<td></td>
+		    	<td><a href="<?php echo $this->url('ca',array('controller'=>'cert','action'=>'index'))?>" target="main">更多...</a></td>
+		    </tr>
+		  </table>
+		</div>
+	</div>
+</div>

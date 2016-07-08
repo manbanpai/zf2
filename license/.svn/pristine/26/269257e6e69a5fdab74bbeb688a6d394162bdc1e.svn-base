@@ -1,0 +1,23 @@
+<?php
+namespace Common\Crypt\Rsa;
+
+class PublicFile
+{
+    /**
+     * 加密块大小
+     * @var number
+     */
+    const RSA_BLOCK_SIZE = 245;
+    
+    public function blockEncrypt(PublicKey $publicKey, $data)
+    {
+        $length = strlen($data);
+        $line = ceil($length/self::RSA_BLOCK_SIZE);
+        $str = '';
+        for ($i=0; $i<$line; $i++){
+            $temp = substr($data, $i*self::RSA_BLOCK_SIZE, self::RSA_BLOCK_SIZE);
+            $str .= $publicKey->encrypt($temp);
+        }
+        return $str;
+    }
+}
