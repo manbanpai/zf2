@@ -17,6 +17,11 @@ class LoginController extends AbstractActionController
 {
 	public function indexAction()
 	{
+	    $session = new Container('login');
+	    if($session->offsetExists('_adminUserId') && $session->offsetExists('_adminRoleId')){
+            $this->redirect()->toRoute('application',array('controller'=>'index'));	        
+	    }
+
 		$form = new UserForm();
 		$request  = $this->getRequest();
 		if($request->isPost()){
@@ -70,7 +75,6 @@ class LoginController extends AbstractActionController
 							return $this->redirect()->toRoute('home');
 						}
 					}
-					$session = new Container('login');
 					$session->offsetSet('_adminUserId',$data['id']);
 					$session->offsetSet('_adminUserName', $data['username']);
 					$session->offsetSet('_adminRoleId', $data['role_id']);
