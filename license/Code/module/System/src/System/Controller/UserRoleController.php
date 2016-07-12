@@ -37,7 +37,7 @@ class UserRoleController extends AbstractActionController
 		
 		$form = new UserRoleForm();
 		$form->bind($userRole);
-		$form->get('submit')->setValue('Edit');
+		$form->get('submit')->setValue('修改');
 		//获取菜单
 		$value = $this->getMenuTable()->fetchAll(array(
 				'where'=>array('display'=>'Y'),
@@ -78,7 +78,7 @@ class UserRoleController extends AbstractActionController
 	public function addAction()
 	{
 		$form = new UserRoleForm();
-		$form->get('submit')->setValue('Add');
+		$form->get('submit')->setValue('提交');
 		$value = $this->getMenuTable()->fetchAll(array(
 				'where'=>array('display'=>'Y'),
 				));

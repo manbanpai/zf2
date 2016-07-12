@@ -69,6 +69,19 @@ echo $this->formhidden($form->get('membercompany_id'));
         </td>
     </tr>
     <tr>
+        <td><b>APP最大数量：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('app_number'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
         <td><b>软件有效天数：</b></td>
     </tr>
     <tr>
@@ -267,6 +280,7 @@ function ajaxFileUpload(){
 				//license文件详细信息
 				$('#max_client_number').val(data.info.max_client_number);
 				$('#soft_valid_days').val(data.info.soft_valid_days);
+				$('#app_number').val(data.info.app_number);
 				//$('#client_info').val(data.info.client_info);
 				$('#company_name').val(data.info.client_info.company_name);
 				$('#tel').val(data.info.client_info.tel);

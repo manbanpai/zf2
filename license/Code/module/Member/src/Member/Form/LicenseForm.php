@@ -61,6 +61,18 @@ class LicenseForm extends Form
             )
         ));
         $this->add(array(
+            'name' => 'app_number',
+            'type' => 'Text',
+            'options' => array(
+                'label' => '',
+            ),
+            'attributes' => array(
+                'id' => 'app_number',
+                'required' => 'required',
+                'class' => 'form-control',
+            )
+        ));
+        $this->add(array(
             'name' => 'soft_valid_days',
             'type' => 'Text',
             'options' => array(

@@ -30,7 +30,7 @@ class LicenseTable extends AbstractTableGateway
             $select->where(array("lic_license.id=$id"));
             return $select;
         });
-        $row = $result->current();
+        $row = $result->current();        
         if (!$row) {
             throw new \Exception("Could not find row $id");
         }
@@ -47,6 +47,7 @@ class LicenseTable extends AbstractTableGateway
         $data = array(
             'max_client_number' => $license->max_client_number,
             'soft_valid_days' => $license->soft_valid_days,
+            'app_number' => $license->app_number,
             'client_info' => $license->client_info,
             'server_domain' => $license->server_domain,
             'server_cpu_id' => $license->server_cpu_id,

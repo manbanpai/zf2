@@ -100,7 +100,7 @@ class MenuController extends AbstractActionController
 	public function addAction()
 	{
 		$form = new MenuForm();
-		$form->get('submit')->setValue('Add');
+		$form->get('submit')->setValue('提交');
 		$this->setMenuList($form);
 		
 		$request = $this->getRequest();
@@ -145,7 +145,7 @@ class MenuController extends AbstractActionController
 		
 		$form = new MenuForm();
 		$form->bind($menu);
-		$form->get('submit')->setValue('Edit');
+		$form->get('submit')->setValue('修改');
 		$data = $this->getMenuTable()->fetchAll();
 		$this->setMenuList($form);
 		

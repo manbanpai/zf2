@@ -1,6 +1,7 @@
 {
 	"max_client_number":"100",		//可接入的最大客户端数量
 	"soft_valid_days":"30",			//软件有效天数
+	"app_number":"100",				//APP最大数量
 	"client_info":					//客户详细信息
 	{
 		"company_name":"\u5e73\u6cbb\u4e1c\u65b9",		//公司名称

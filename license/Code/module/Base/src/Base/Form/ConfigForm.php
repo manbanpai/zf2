@@ -57,7 +57,7 @@ class ConfigForm extends Form
 				'options'=>array(),
 				'attributes'=>array(
 						'class'=>'btn btn-primary',
-						'value'=>'保存'
+						'value'=>'提交'
 				)
 		));
 	}

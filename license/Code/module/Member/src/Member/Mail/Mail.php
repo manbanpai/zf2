@@ -9,12 +9,89 @@ use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 class Mail
 {
+    private $mailName = 'mail.pzdf.com';
+    private $mailHost = 'mail.pzdf.com';
+    private $mailUsername = 'servicepzdf@pzdf.com';
+    private $mailPassword = '2016pzdf.com';
+    
     public $from = 'servicepzdf@pzdf.com';
     public $to = 'servicepzdf@pzdf.com';
     public $data = 'license文件';
     public $subject = 'license文件';
     public $attachmentName = '';
     public $filetype = 'text/plain';
+    
+    /**
+     * 设置邮箱服务器名称
+     * @param string $mailName
+     */
+    public function setMailName($mailName)
+    {
+        $this->mailName = $mailName;
+    }
+    
+    /**
+     * 获取邮箱服务器名称
+     * @return string
+     */
+    public function getMailName()
+    {
+        return $this->mailName;
+    }
+    
+    /**
+     * 设置邮箱服务器地址
+     * @param string $mailHost
+     */
+    public function setMailHost($mailHost)
+    {
+        $this->mailHost = $mailHost;
+    }
+    
+    /**
+     * 获取邮箱服务器地址
+     * @return string
+     */
+    public function getMailHost()
+    {
+        return $this->mailHost;
+    }
+    
+    /**
+     * 设置邮箱服务器用户名
+     * @param string $mailUsername
+     */
+    public function setMailUsername($mailUsername)
+    {
+        $this->mailUsername = $mailUsername;
+    }
+    
+    /**
+     * 获取邮箱服务器名称
+     * @return string
+     */
+    public function getMailUsername()
+    {
+        return $this->mailUsername;
+    }
+    
+    /**
+     * 设置邮箱服务器密码
+     * @param string $mailPassword
+     */
+    public function setMailPassword($mailPassword)
+    {
+        $this->mailPassword = $mailPassword;
+    }
+    
+    /**
+     * 获取邮箱服务器密码
+     * @return string
+     */
+    public function getMailPassword()
+    {
+        return $this->mailPassword;
+    }
     
     /**
      * 设置邮件主题
@@ -142,13 +219,13 @@ class Mail
         $msg->setBody($mimeMessage);
         
         $smtpOpt = new SmtpOptions(array(
-            'name' => 'mail.pzdf.com',
-            'host' => 'mail.pzdf.com',
+            'name' => $this->getMailName(),
+            'host' => $this->getMailHost(),
             'port' => 25,
             'connection_class' => 'login',
             'connection_config' => array(
-                'username' => 'servicepzdf@pzdf.com',
-                'password' => '2016pzdf.com'
+                'username' => $this->getMailUsername(),
+                'password' => $this->getMailPassword(),
             )
         ));
         $trans = new Smtp();

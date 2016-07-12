@@ -17,6 +17,7 @@ echo $this->formhidden($form->get('membercompany_id'));
     </tr>
     <tr>
         <td>
+        <?php echo $this->escapehtml($this->serial);?>
         <?php echo $this->formrow($form->get('certficate_id'));?>
         </td>
     </tr>
@@ -43,6 +44,19 @@ echo $this->formhidden($form->get('membercompany_id'));
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-11"><?php echo $this->formrow($form->get('soft_valid_days'));?></div>
+                    <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><b>APP最大数量：</b></td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-11"><?php echo $this->formrow($form->get('app_number'));?></div>
                     <div class="col-xs-1"><p style="color: red;"><strong>*</strong></p></div>
                 </div>
             </div>

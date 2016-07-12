@@ -3431,6 +3431,13 @@ CREATE TABLE IF NOT EXISTS `lic_config` (
   PRIMARY KEY (`variable`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统配置';
 
+-- ----------------------------
+-- Records of lic_config
+-- ----------------------------
+INSERT INTO `lic_config` VALUES ('base', 'email_host', 'mail.pzdf.com', '邮箱服务器地址');
+INSERT INTO `lic_config` VALUES ('base', 'email_password', '2016pzdf.com', '邮箱服务器密码');
+INSERT INTO `lic_config` VALUES ('base', 'email_username', 'servicepzdf@pzdf.com', '邮箱服务器用户名');
+
 -- --------------------------------------------------------
 
 --
@@ -3441,6 +3448,7 @@ CREATE TABLE IF NOT EXISTS `lic_license` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'license文件管理表',
   `max_client_number` varchar(128) NOT NULL DEFAULT '0' COMMENT '可接入的最大客户端数量',
   `soft_valid_days` varchar(128) NOT NULL DEFAULT '0' COMMENT '软件有效天数',
+  `app_number` varchar(128) NOT NULL DEFAULT '0' COMMENT 'APP数量',
   `client_info` varchar(1024) NOT NULL DEFAULT '' COMMENT '省份，城市，组织名称，组织部门，管理员邮件地址',
   `server_domain` varchar(128) NOT NULL DEFAULT '' COMMENT '服务器主机/域名',
   `server_cpu_id` varchar(128) NOT NULL DEFAULT '' COMMENT '服务器cpu id',

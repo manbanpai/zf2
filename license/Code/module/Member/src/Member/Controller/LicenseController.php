@@ -18,7 +18,8 @@ use Member\Form\SendMailForm;
 class LicenseController extends AbstractActionController
 {
     protected $licenseTable;
-    protected $certficateTable;    
+    protected $certficateTable;
+    protected $configTable;
     
     public function getLicenseTable()
     {
@@ -36,6 +37,15 @@ class LicenseController extends AbstractActionController
             $this->certficateTable = $sm->get('Member\Model\CertficateTable');
         }
         return $this->certficateTable;
+    }
+    
+    public function getConfigTable()
+    {
+        if(!$this->configTable){
+            $sm = $this->getServiceLocator();
+            $this->configTable = $sm->get('Base\Model\ConfigTable');
+        }
+        return $this->configTable;
     }
     
     /**
@@ -257,9 +267,9 @@ class LicenseController extends AbstractActionController
         
         //aes加密文件
         $aes = new Aes();
-        //aes加密key
         $licFile->setMaxClientNumber($data->max_client_number);
         $licFile->setSoftValideDays($data->soft_valid_days);
+        $licFile->setAppNumber($data->app_number);
         
         //$licFile->setClientInfo($data->client_info);
         $clientInfo = json_decode($data->client_info);
@@ -406,6 +416,8 @@ class LicenseController extends AbstractActionController
         $view = new ViewModel();
         $view->setVariable('form', $form);
         $view->setVariable('id', $id);
+        //证书序列号
+        $view->setVariable('serial', $license->serial);
         return $view;
     }
     
@@ -427,12 +439,11 @@ class LicenseController extends AbstractActionController
      */
     public function sendemailAction()
     {
-        
         $id = (int)$this->params()->fromRoute('id', 0);
         $send = (int)$this->params()->fromPost('send', 0);
         $data = $this->getLicenseTable()->getLicense($id);
         if ($data->audit=='0'){
-            throw new \Exception('审核未通过，不允许下载！');
+            throw new \Exception('审核未通过，不允许发送email！');
         }
         if ($send){
             $emailaddress = $this->params()->fromPost('email','yesw@pzdf.com');
@@ -441,10 +452,33 @@ class LicenseController extends AbstractActionController
             $licFilePath = $licFile->getFilePath();
             //license文件名
             $licFileName = $licFile->getFileName($data->serialnumber);
+            
+            if (!file_exists($licFilePath.$licFileName)){
+                $this->createLicense($licFile, $data);
+            }
             $file = $licFilePath.$licFileName;
             $data = fopen($file, 'r');
             
+            //email 配置项
+            $base = $this->getConfigTable()->fetchAll(array(
+                'where'=>array('scope'=>'base'),
+            ));
+            $arr = array();
+            foreach ($base as $p){
+                $arr[$p->variable] = $p->value;
+            }
+            $mailName = $arr['email_host'];
+            $mailHost = $arr['email_host'];
+            $mailUsername = $arr['email_username'];
+            $mailPassword = $arr['email_password'];
+            
             $mail = new Mail();
+            //服务器设置
+            $mail->setMailName($mailName);
+            $mail->setMailHost($mailHost);
+            $mail->setMailUsername($mailUsername);
+            $mail->setMailPassword($mailPassword);
+            //发送内容设置
             $mail->setTo($emailaddress);
             $mail->setData($data);
             $mail->setAttachmentName($licFileName);

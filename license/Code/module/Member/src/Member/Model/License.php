@@ -11,6 +11,7 @@ class License implements InputFilterAwareInterface
     public $id;
     public $max_client_number;
     public $soft_valid_days;
+    public $app_number;
     public $client_info;
     public $server_domain;
     public $server_cpu_id;
@@ -44,11 +45,12 @@ class License implements InputFilterAwareInterface
         $this->id = (!empty($data['id'])) ? $data['id'] : '';
         $this->max_client_number = (!empty($data['max_client_number'])) ? $data['max_client_number'] : '';
         $this->soft_valid_days = (!empty($data['soft_valid_days'])) ? $data['soft_valid_days'] : '';
+        $this->app_number = (!empty($data['app_number'])) ? $data['app_number'] : '';
         $this->client_info  = (!empty($data['client_info'])) ? $data['client_info'] : '';
         $this->server_domain = (!empty($data['server_domain'])) ? $data['server_domain'] : '';
-        $this->server_ip = (!empty($data['server_ip'])) ? $data['server_ip'] : '';
-        $this->server_cpu_id = (!empty($data['server_cpu_id'])) ? $data['server_cpu_id'] : '';
-        $this->server_mac = (!empty($data['server_mac'])) ? $data['server_mac'] : '';
+        $this->server_ip = isset($data['server_ip']) ? $data['server_ip'] : '';
+        $this->server_cpu_id = isset($data['server_cpu_id']) ? $data['server_cpu_id'] : '';
+        $this->server_mac = isset($data['server_mac']) ? $data['server_mac'] : '';
         $this->license_savepath = (!empty($data['license_savepath'])) ? $data['license_savepath'] : '';
         $this->sha1file = (!empty($data['sha1file'])) ? $data['sha1file'] : '';
         $this->status = (!empty($data['status'])) ? $data['status'] : '';
@@ -108,11 +110,33 @@ class License implements InputFilterAwareInterface
                     array('name' => 'Between', 
                         'options' => array(
                             'min' => 1,
-                            'max' => 1000,
+                            'max' => 2000,
                         ),                        
                     ),
                 ),
-                'error_message' => '必须为数字，不能为空，范围在1至1000个。'
+                'error_message' => '必须为数字，不能为空，范围在1至2000个。'
+            )));
+            $inputFilter->add($factory->createInput(array(
+                'name' => 'app_number',
+                'required' => true,
+                'filters' => array(
+                    array(
+                        'name' => 'StripTags',
+                        'name' => 'StringTrim',
+                        'name' => 'Digits',
+                    )
+                ),
+                'validators' => array(
+                    array('name' => 'NotEmpty'),
+                    array('name' => 'Digits'),
+                    array('name' => 'Between',
+                        'options' => array(
+                            'min' => 1,
+                            'max' => 2000,
+                        ),
+                    ),
+                ),
+                'error_message' => '必须为数字，不能为空，范围在1至2000个。'
             )));
             $inputFilter->add($factory->createInput(array(
                 'name'      => 'soft_valid_days',

@@ -29,6 +29,7 @@ class ConfigController extends AbstractActionController
 		}
 		
 		$form = new ConfigForm();
+		$form->get('submit')->setValue('修改');
 		$form->bind($config);
 		
 		$request = $this->getRequest();
